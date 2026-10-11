@@ -23,9 +23,15 @@ button.primary{background:linear-gradient(135deg,#0ea5e9,#2563eb)}button:active{
 button:focus-visible,.fileButton:focus-visible{outline:2px solid #7dd3fc;outline-offset:2px}
 .playerWrap{margin-top:14px;background:#02060d;border-radius:14px;overflow:hidden;border:1px solid #28374b}
 video{display:block;width:100%;aspect-ratio:16/9;background:#02060d;max-height:58vh}
-.nowPlaying{padding:10px 12px;background:#0c1524;display:flex;gap:10px;align-items:center}
+.nowPlaying{padding:10px 12px;background:#0c1524;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .nowPlaying img{width:38px;height:38px;object-fit:contain;border-radius:8px;background:#17243a}
+.nowPlaying .playingInfo{flex:1;min-width:90px}
 .nowPlaying strong{font-size:13px;display:block}.nowPlaying small{color:var(--muted);font-size:11px}
+.channelNav{display:flex;gap:6px;margin-left:auto}
+.channelNav button{padding:9px 11px;background:#20334e;border:1px solid #354b69}
+.channelNav button:disabled{opacity:.4;cursor:not-allowed}
+.playerBrand{background:#070d17;border-top:1px solid #1e2c40;color:#91a5c3;text-align:center;font-size:11px;font-weight:800;letter-spacing:2px;padding:9px 12px}
+@media(max-width:420px){.channelNav{width:100%;margin-left:0}.channelNav button{flex:1}}
 .status{font-size:12px;color:var(--muted);padding:9px 2px 0;line-height:1.5;overflow-wrap:anywhere}
 .status.error{color:#fda4af}.status.good{color:#86efac}
 .tools{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
@@ -75,8 +81,13 @@ footer{max-width:1200px;margin:auto;padding:0 16px 24px;color:#8090a8;font-size:
       <video id="video" controls playsinline webkit-playsinline preload="metadata"></video>
       <div class="nowPlaying">
         <img id="nowLogo" alt="" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
-        <div><strong id="nowName">কোনো চ্যানেল চালু নেই</strong><small id="nowGroup">চ্যানেল তালিকা থেকে নির্বাচন করুন</small></div>
+        <div class="playingInfo"><strong id="nowName">কোনো চ্যানেল চালু নেই</strong><small id="nowGroup">চ্যানেল তালিকা থেকে নির্বাচন করুন</small></div>
+        <div class="channelNav" aria-label="চ্যানেল পরিবর্তন">
+          <button id="prevChannel" type="button" disabled>⏮ আগের</button>
+          <button id="nextChannel" type="button" disabled>পরের ⏭</button>
+        </div>
       </div>
+      <div class="playerBrand">PARVEZ TV</div>
     </div>
     <p class="status">টিপস: কিছু M3U লিংক CORS, লগইন, DRM বা মেয়াদোত্তীর্ণ স্ট্রিমের কারণে ব্রাউজারে নাও চলতে পারে।</p>
   </section>
@@ -185,9 +196,21 @@ footer{max-width:1200px;margin:auto;padding:0 16px 24px;color:#8090a8;font-size:
       card.append(img,text,star); card.addEventListener('click',()=>play(c)); frag.append(card);
     });
     els.channels.append(frag);
+    updateChannelNav();
+  }
+  function updateChannelNav() {
+    const index = playlist.findIndex(c => c.url === selectedUrl);
+    els.prev.disabled = index <= 0;
+    els.next.disabled = index < 0 || index >= playlist.length - 1;
+  }
+  function changeChannel(step) {
+    const index = playlist.findIndex(c => c.url === selectedUrl);
+    const nextIndex = index + step;
+    if (nextIndex >= 0 && nextIndex < playlist.length) play(playlist[nextIndex]);
   }
   function play(c) {
     selectedUrl=c.url;
+    updateChannelNav();
     if(hls){hls.destroy();hls=null;}
     els.video.pause(); els.video.removeAttribute('src'); els.video.load();
     els.nowName.textContent=c.name; els.nowGroup.textContent=c.group || 'অন্যান্য';
@@ -211,8 +234,10 @@ footer{max-width:1200px;margin:auto;padding:0 16px 24px;color:#8090a8;font-size:
     if(timer){clearInterval(timer);timer=null;} els.auto.checked=false;
     if(hls){hls.destroy();hls=null;} els.video.pause();els.video.removeAttribute('src');els.video.load();
     els.nowName.textContent='কোনো চ্যানেল চালু নেই';els.nowGroup.textContent='চ্যানেল তালিকা থেকে নির্বাচন করুন';
-    render();msg('প্লেলিস্টের লিংক মুছে ফেলা হয়েছে।');
+    updateChannelNav(); render();msg('প্লেলিস্টের লিংক মুছে ফেলা হয়েছে।');
   });
+  els.prev.addEventListener('click',()=>changeChannel(-1));
+  els.next.addEventListener('click',()=>changeChannel(1));
   els.search.addEventListener('input',render); els.group.addEventListener('change',render);
   els.favFilter.addEventListener('click',()=>{const active=els.favFilter.getAttribute('aria-pressed')!=='true';els.favFilter.setAttribute('aria-pressed',String(active));els.favFilter.textContent=active?'♥ শুধু ফেভারিট':'♡ ফেভারিট';render();});
   els.auto.addEventListener('change',setupTimer); els.minutes.addEventListener('change',setupTimer);

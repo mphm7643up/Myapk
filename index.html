@@ -2,193 +2,115 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Simple IPTV Player</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10102b">
+<title>LinkFlow — Universal Link Tool</title>
 <style>
-  :root { color-scheme: dark; --bg:#111318; --panel:#1c2028; --line:#343a46; --accent:#f4d938; --text:#f5f6f8; --muted:#aab1bd; }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--text); font-family:Arial, sans-serif; }
-  main { width:min(760px,100%); margin:0 auto; padding:18px 14px 28px; }
-  h1 { font-size:23px; margin:5px 0 18px; text-align:center; }
-  .tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
-  .tab, button { border:0; border-radius:9px; padding:12px; font-size:15px; cursor:pointer; }
-  .tab { background:#292e38; color:var(--text); border:1px solid var(--line); }
-  .tab.active, .primary { background:var(--accent); color:#171717; font-weight:700; }
-  .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:15px; margin-bottom:14px; }
-  label { display:block; font-size:14px; margin:12px 0 6px; color:#e1e4e9; }
-  input { width:100%; padding:12px; border-radius:8px; border:1px solid #454c59; background:#101319; color:white; font-size:15px; }
-  button { width:100%; margin-top:13px; }
-  .secondary { background:#303641; color:white; }
-  video { width:100%; aspect-ratio:16/9; background:#000; border-radius:10px; display:block; }
-  .status { color:var(--muted); font-size:13px; margin:10px 2px 0; overflow-wrap:anywhere; }
-  .channels { display:flex; flex-direction:column; gap:7px; margin-top:12px; max-height:320px; overflow:auto; }
-  .channel { text-align:left; background:#292e38; color:white; border:1px solid #414855; margin:0; }
-  .channel:focus, .channel:hover { border-color:var(--accent); }
-  .hidden { display:none !important; }
-  .hint { color:var(--muted); font-size:12px; line-height:1.5; margin:10px 0 0; }
+:root{--bg:#0b1026;--card:rgba(255,255,255,.09);--line:rgba(255,255,255,.15);--text:#f7f7ff;--muted:#b7bddb;--cyan:#22d3ee;--pink:#f472b6;--purple:#a78bfa;--lime:#bef264}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;color:var(--text);background:radial-gradient(ellipse at 15% 5%,#5422a8 0,transparent 35%),radial-gradient(ellipse at 90% 20%,#075985 0,transparent 30%),radial-gradient(ellipse at 55% 100%,#831843 0,transparent 32%),var(--bg);padding:22px 14px 36px}
+.wrap{max-width:780px;margin:auto}
+header{display:flex;align-items:center;gap:13px;margin:10px 0 28px}
+.logo{width:52px;height:52px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--purple),var(--pink));box-shadow:0 8px 30px #a78bfa55;font-size:27px}
+.brand{font-weight:900;font-size:22px;letter-spacing:.8px}
+.brand span{background:linear-gradient(90deg,var(--cyan),var(--pink));color:transparent;background-clip:text}
+.tagline{color:var(--muted);font-size:12px;margin-top:3px}
+.pill{margin-left:auto;border:1px solid #bef26466;color:var(--lime);background:#bef26412;border-radius:999px;padding:7px 10px;font-size:11px;white-space:nowrap}
+.hero{text-align:center;margin-bottom:24px}
+.eyebrow{display:inline-block;padding:7px 12px;border:1px solid #22d3ee55;border-radius:999px;background:#22d3ee12;color:#a5f3fc;font-size:12px;font-weight:700}
+h1{font-size:clamp(29px,7vw,47px);line-height:1.13;margin:15px 0 10px;font-weight:900;letter-spacing:-1px}
+h1 .gradient{background:linear-gradient(90deg,#22d3ee,#a78bfa,#f472b6,#bef264);color:transparent;background-clip:text}
+.hero p{color:var(--muted);line-height:1.7;max-width:560px;margin:0 auto;font-size:14px}
+.panel{border:1px solid var(--line);border-radius:25px;padding:clamp(18px,4vw,30px);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.045));backdrop-filter:blur(18px);box-shadow:0 25px 80px #0005}
+.label{display:block;font-size:13px;font-weight:800;margin-bottom:10px;color:#e4e8ff}
+.inputrow{display:flex;gap:9px}
+input{width:100%;min-width:0;padding:16px 15px;border-radius:14px;border:1px solid #a78bfa66;background:#090d21;color:white;font-size:14px;outline:none}
+input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #22d3ee1c}
+button{border:0;cursor:pointer;font:inherit;font-weight:800;transition:transform .18s,filter .18s}
+button:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.process{margin-top:12px;width:100%;padding:16px;border-radius:15px;color:#11132b;background:linear-gradient(100deg,var(--cyan),var(--purple),var(--pink));box-shadow:0 9px 25px #a78bfa33;letter-spacing:.5px}
+.note{color:var(--muted);font-size:12px;line-height:1.6;margin:12px 2px 0}
+.result{display:none;margin-top:18px;border:1px solid #22d3ee55;border-radius:17px;padding:16px;background:#22d3ee0d}
+.result.show{display:block}
+.resulttop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.resulttitle{font-size:13px;font-weight:800;color:#a5f3fc}
+.status{font-size:11px;color:var(--lime);border:1px solid #bef26455;border-radius:999px;padding:5px 8px}
+.resulturl{overflow-wrap:anywhere;line-height:1.6;font-size:13px;color:#fff}
+.copy{margin-top:12px;padding:10px 14px;border-radius:11px;background:linear-gradient(90deg,#bef264,#22d3ee);color:#10162c;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.feature{border:1px solid var(--line);background:#ffffff08;border-radius:17px;padding:15px 13px;text-align:center}
+.feature .ico{font-size:23px;margin-bottom:7px}
+.feature b{display:block;font-size:13px;margin-bottom:5px}
+.feature small{display:block;color:var(--muted);font-size:11px;line-height:1.5}
+.info{margin-top:18px;border:1px solid #fbbf2444;background:#fbbf240b;border-radius:16px;padding:15px;color:#fef3c7;font-size:12px;line-height:1.7}
+footer{text-align:center;color:#969fca;font-size:11px;margin-top:25px;line-height:1.8}
+@media(max-width:520px){body{padding:15px 12px 28px}header{margin-top:4px}.pill{display:none}.grid{grid-template-columns:1fr}.feature{display:flex;text-align:left;align-items:center;gap:12px}.feature .ico{margin:0}.inputrow{flex-direction:column}.inputrow input{width:100%}.hero{margin-bottom:19px}}
 </style>
 </head>
 <body>
-<main>
-  <h1>Simple IPTV Player</h1>
-  <div class="tabs">
-    <button class="tab active" id="m3uTab" type="button">M3U Link</button>
-    <button class="tab" id="xtreamTab" type="button">Xtream Codes</button>
+<div class="wrap">
+<header>
+  <div class="logo" aria-hidden="true">🔗</div>
+  <div><div class="brand">LINK<span>FLOW</span></div><div class="tagline">Universal Link Tool</div></div>
+  <div class="pill">✦ COLORFUL • SIMPLE</div>
+</header>
+<section class="hero">
+  <div class="eyebrow">⚡ YOUR LINK, ONE PLACE</div>
+  <h1>Links made <span class="gradient">simpler.</span></h1>
+  <p>লিংক পেস্ট করুন, যাচাই করুন এবং সম্ভব হলে গন্তব্য ঠিকানা দেখুন। সহজ, দ্রুত ও মোবাইল-ফ্রেন্ডলি ইন্টারফেস।</p>
+</section>
+<main class="panel">
+  <label class="label" for="linkInput">🔗 আপনার লিংক পেস্ট করুন</label>
+  <div class="inputrow">
+    <input id="linkInput" type="url" placeholder="https://example.com/your-link" autocomplete="url" inputmode="url">
   </div>
-
-  <section class="panel" id="m3uPanel">
-    <label for="m3uUrl">M3U Playlist Link</label>
-    <input id="m3uUrl" type="url" placeholder="https://example.com/playlist.m3u" autocomplete="url">
-    <button class="primary" id="loadM3u" type="button">Load Playlist</button>
-    <p class="hint">M3U ফাইলে থাকা চ্যানেলগুলো নিচে দেখাবে। কোনো লিংক সরাসরি ভিডিও হলে সেটিও চালানোর চেষ্টা করবে।</p>
-  </section>
-
-  <section class="panel hidden" id="xtreamPanel">
-    <label for="server">Server Address</label>
-    <input id="server" type="url" placeholder="https://server.example.com" autocomplete="url">
-    <label for="username">Username</label>
-    <input id="username" type="text" placeholder="Username" autocomplete="username">
-    <label for="password">Password</label>
-    <input id="password" type="password" placeholder="Password" autocomplete="current-password">
-    <button class="primary" id="loadXtream" type="button">Connect</button>
-    <p class="hint">আপনার সার্ভারে Xtream Codes API চালু থাকতে হবে। পরিচিত/বিশ্বস্ত সার্ভারের তথ্যই ব্যবহার করুন।</p>
-  </section>
-
-  <section class="panel">
-    <video id="video" controls playsinline preload="metadata"></video>
-    <div class="status" id="status" role="status">M3U লিংক দিন অথবা Xtream Codes নির্বাচন করুন।</div>
-    <div class="channels" id="channels"></div>
+  <button class="process" id="processBtn">✦ PROCESS LINK &nbsp; →</button>
+  <p class="note">এই GitHub Pages সংস্করণটি লিংকের ফরম্যাট যাচাই করে এবং সাধারণ সরাসরি URL খুলতে সাহায্য করে। বাইরের শর্ট-লিংক সার্ভারের আসল গন্তব্য সবসময় বের করা সম্ভব নয়।</p>
+  <section class="result" id="result" aria-live="polite">
+    <div class="resulttop"><div class="resulttitle">RESULT / DESTINATION URL</div><div class="status" id="status">Checked</div></div>
+    <div class="resulturl" id="resultUrl"></div>
+    <button class="copy" id="copyBtn">▣ COPY LINK</button>
   </section>
 </main>
-
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<section class="grid" aria-label="Features">
+  <div class="feature"><div class="ico">🌈</div><div><b>Colorful UI</b><small>রঙিন গ্রেডিয়েন্ট ও আধুনিক ডিজাইন</small></div></div>
+  <div class="feature"><div class="ico">📱</div><div><b>Mobile Friendly</b><small>Android ফোনেও সহজে ব্যবহারযোগ্য</small></div></div>
+  <div class="feature"><div class="ico">📋</div><div><b>Quick Copy</b><small>এক ট্যাপে লিংক কপি করুন</small></div></div>
+</section>
+<div class="info">💡 <b>জেনে রাখুন:</b> শুধু HTML/JavaScript দিয়ে সব শর্ট লিংক বাইপাস করা যায় না। কিছু সাইটে সার্ভার, CAPTCHA, লগইন বা অপেক্ষার ধাপ থাকে। এই পেজ সেগুলো এড়িয়ে যায় না এবং অজানা গন্তব্য বানিয়ে দেখায় না।</div>
+<footer>LINKFLOW · Universal Link Tool<br>Use links you own or have permission to access.</footer>
+</div>
 <script>
-(() => {
-  const $ = id => document.getElementById(id);
-  const m3uTab = $('m3uTab'), xtreamTab = $('xtreamTab');
-  const m3uPanel = $('m3uPanel'), xtreamPanel = $('xtreamPanel');
-  const video = $('video'), status = $('status'), channelsBox = $('channels');
-  let hls = null, currentItems = [];
-
-  function message(text) { status.textContent = text; }
-  function cleanServer(value) { return value.trim().replace(/\/+$/, ''); }
-
-  function showTab(which) {
-    const m3u = which === 'm3u';
-    m3uPanel.classList.toggle('hidden', !m3u);
-    xtreamPanel.classList.toggle('hidden', m3u);
-    m3uTab.classList.toggle('active', m3u);
-    xtreamTab.classList.toggle('active', !m3u);
-    message(m3u ? 'M3U লিংক দিন অথবা প্লেলিস্ট লোড করুন।' : 'Xtream Codes সার্ভারের তথ্য দিন।');
+const input = document.getElementById('linkInput');
+const result = document.getElementById('result');
+const resultUrl = document.getElementById('resultUrl');
+const status = document.getElementById('status');
+document.getElementById('processBtn').addEventListener('click', () => {
+  let raw = input.value.trim();
+  if (!raw) { alert('প্রথমে একটি লিংক পেস্ট করুন।'); input.focus(); return; }
+  if (!/^https?:\/\//i.test(raw)) raw = 'https://' + raw;
+  let parsed;
+  try { parsed = new URL(raw); }
+  catch { alert('সঠিক URL দিন। উদাহরণ: https://example.com'); return; }
+  if (!['http:','https:'].includes(parsed.protocol)) { alert('শুধু HTTP বা HTTPS লিংক ব্যবহার করুন।'); return; }
+  resultUrl.textContent = parsed.href;
+  status.textContent = 'URL Valid';
+  result.classList.add('show');
+});
+document.getElementById('copyBtn').addEventListener('click', async () => {
+  const value = resultUrl.textContent;
+  try {
+    await navigator.clipboard.writeText(value);
+    document.getElementById('copyBtn').textContent = '✓ COPIED!';
+  } catch {
+    const area = document.createElement('textarea');
+    area.value = value; document.body.appendChild(area); area.select();
+    document.execCommand('copy'); area.remove();
+    document.getElementById('copyBtn').textContent = '✓ COPIED!';
   }
-  m3uTab.addEventListener('click', () => showTab('m3u'));
-  xtreamTab.addEventListener('click', () => showTab('xtream'));
-
-  function stopCurrent() {
-    if (hls) { hls.destroy(); hls = null; }
-    video.pause();
-    video.removeAttribute('src');
-    video.load();
-  }
-
-  function playItem(item) {
-    if (!item || !item.url) return;
-    stopCurrent();
-    message('চালু করার চেষ্টা হচ্ছে: ' + item.name);
-    const url = item.url.trim();
-    if (window.Hls && Hls.isSupported() && (/\.m3u8($|\?)/i.test(url) || url.includes('.m3u8'))) {
-      hls = new Hls();
-      hls.loadSource(url);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => message('Play চাপুন। অটো-প্লে ব্রাউজার ব্লক করতে পারে।')));
-      hls.on(Hls.Events.ERROR, (_, data) => { if (data.fatal) message('ভিডিও চালানো যায়নি। লিংক, নেটওয়ার্ক বা সার্ভার পরীক্ষা করুন।'); });
-    } else {
-      video.src = url;
-      video.play().catch(() => message('ভিডিও চালাতে Play চাপুন। ফরম্যাট বা সার্ভার ব্রাউজারে সমর্থিত নাও হতে পারে।'));
-    }
-  }
-
-  function renderItems(items) {
-    currentItems = items;
-    channelsBox.replaceChildren();
-    if (!items.length) {
-      message('কোনো চ্যানেল পাওয়া যায়নি। লিংক বা সার্ভারের তথ্য পরীক্ষা করুন।');
-      return;
-    }
-    const frag = document.createDocumentFragment();
-    items.forEach((item, index) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'channel';
-      button.textContent = (index + 1) + '. ' + item.name;
-      button.addEventListener('click', () => playItem(item));
-      frag.appendChild(button);
-    });
-    channelsBox.appendChild(frag);
-    message(items.length + 'টি চ্যানেল পাওয়া গেছে। চালাতে চ্যানেলের নাম চাপুন।');
-  }
-
-  function parseM3U(text) {
-    const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/);
-    const items = [];
-    let name = 'Channel';
-    for (const raw of lines) {
-      const line = raw.trim();
-      if (!line) continue;
-      if (line.startsWith('#EXTINF')) {
-        const comma = line.lastIndexOf(',');
-        name = comma >= 0 ? line.slice(comma + 1).trim() : 'Channel';
-        const tvg = line.match(/tvg-name="([^"]+)"/i);
-        if ((!name || name === 'Channel') && tvg) name = tvg[1];
-      } else if (!line.startsWith('#')) {
-        if (/^https?:\/\//i.test(line)) items.push({ name: name || 'Channel', url: line });
-        name = 'Channel';
-      }
-    }
-    return items;
-  }
-
-  $('loadM3u').addEventListener('click', async () => {
-    const url = $('m3uUrl').value.trim();
-    if (!url) { message('আগে M3U Playlist Link দিন।'); return; }
-    try {
-      message('প্লেলিস্ট লোড হচ্ছে…');
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      const text = await response.text();
-      if (!text.trim()) throw new Error('খালি প্লেলিস্ট');
-      renderItems(parseM3U(text));
-    } catch (e) {
-      message('প্লেলিস্ট লোড হয়নি। লিংক ভুল হতে পারে অথবা CORS অনুমতি নেই। (' + e.message + ')');
-    }
-  });
-
-  $('loadXtream').addEventListener('click', async () => {
-    const server = cleanServer($('server').value);
-    const username = $('username').value.trim();
-    const password = $('password').value;
-    if (!server || !username || !password) { message('Server Address, Username ও Password—তিনটিই দিন।'); return; }
-    try {
-      message('সার্ভারে সংযোগ হচ্ছে…');
-      const api = server + '/player_api.php?username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password);
-      const response = await fetch(api);
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      const info = await response.json();
-      if (!info || !info.user_info || info.user_info.auth === 0) throw new Error('লগইন তথ্য গ্রহণ করা হয়নি');
-      const liveResponse = await fetch(api + '&action=get_live_streams');
-      if (!liveResponse.ok) throw new Error('চ্যানেল তালিকা পাওয়া যায়নি');
-      const streams = await liveResponse.json();
-      if (!Array.isArray(streams)) throw new Error('সার্ভার থেকে সঠিক চ্যানেল তালিকা আসেনি');
-      const items = streams.map(s => ({
-        name: s.name || ('Channel ' + s.stream_id),
-        url: server + '/live/' + encodeURIComponent(username) + '/' + encodeURIComponent(password) + '/' + encodeURIComponent(s.stream_id) + '.' + (s.container_extension || 'm3u8')
-      }));
-      renderItems(items);
-    } catch (e) {
-      message('সংযোগ ব্যর্থ। Server URL, Username, Password, API ও CORS পরীক্ষা করুন। (' + e.message + ')');
-    }
-  })();
-})();
+  setTimeout(() => document.getElementById('copyBtn').textContent = '▣ COPY LINK', 1800);
+});
+input.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('processBtn').click(); });
 </script>
 </body>
 </html>

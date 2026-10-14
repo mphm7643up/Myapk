@@ -1,193 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#070b22">
-  <meta name="description" content="PARVEZ — Web Designer & Online TV Service. Personal portfolio, web design, and IPTV support.">
-  <title>PARVEZ | Web Designer & Online TV Service</title>
-  <style>
-    :root{--bg:#070b22;--panel:#0e1735;--panel2:#111e43;--text:#f6f7ff;--muted:#b8c3e6;--line:rgba(155,190,255,.18);--pink:#e42bff;--blue:#00c8ff;--purple:#773cff;--green:#19e3ad;--shadow:0 18px 55px rgba(0,0,0,.25)}
-    *{box-sizing:border-box;scroll-behavior:smooth}
-    body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Bengali","Hind Siliguri",sans-serif;background:radial-gradient(ellipse at 0% 0%,#28105e 0,transparent 34%),radial-gradient(ellipse at 100% 20%,#101e63 0,transparent 32%),var(--bg);color:var(--text);line-height:1.65}
-    a{color:inherit;text-decoration:none}
-    button{font:inherit;cursor:pointer}
-    .container{width:min(1120px,92%);margin:auto}
-    .topbar{position:sticky;top:0;z-index:20;background:rgba(7,11,34,.86);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
-    nav{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:76px}
-    .brand{display:flex;align-items:center;gap:10px;font-size:1.35rem;font-weight:900;letter-spacing:.5px}
-    .brand-mark{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--pink),var(--blue));font-size:1.45rem;box-shadow:0 0 24px #8d3cff55}
-    .brand span:last-child{background:linear-gradient(90deg,#ff61e7,#39caff);background-clip:text;color:transparent}
-    .navlinks{display:flex;align-items:center;gap:22px;color:var(--muted);font-size:.94rem}
-    .navlinks a:hover{color:white}
-    .nav-actions{display:flex;align-items:center;gap:10px}
-    .theme-btn,.menu-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:9px 12px;border-radius:999px}
-    .menu-btn{display:none}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:12px 20px;font-weight:750;color:white;background:linear-gradient(100deg,var(--pink),var(--purple),#008dff);box-shadow:0 8px 25px #812bff35;transition:transform .2s,filter .2s}
-    .btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
-    .btn.secondary{background:transparent;border:1px solid #9ab5ff88;box-shadow:none}
-    .hero{padding:76px 0 68px;overflow:hidden;position:relative}
-    .hero-grid{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:44px}
-    .eyebrow{display:inline-flex;padding:6px 13px;border:1px solid #c35aff66;background:#a832ff1c;border-radius:999px;color:#f0b6ff;font-size:.9rem}
-    h1{font-size:clamp(3rem,8vw,5.7rem);line-height:1.02;letter-spacing:-2px;margin:18px 0 10px;font-weight:950}
-    .gradient-text{background:linear-gradient(90deg,#ff62e9,#7c72ff,#28d8ff);background-clip:text;color:transparent}
-    .hero h2{font-size:clamp(1.2rem,3vw,1.7rem);margin:0 0 15px}
-    .hero p{color:var(--muted);max-width:610px;margin:0 0 24px}
-    .hero-buttons{display:flex;gap:12px;flex-wrap:wrap}
-    .socials{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
-    .socials a{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:#ffffff0b;border:1px solid var(--line);font-weight:800;transition:.2s}
-    .socials a:hover{transform:translateY(-3px);background:linear-gradient(135deg,var(--pink),var(--blue))}
-    .portrait-wrap{position:relative;display:grid;place-items:center;min-height:340px}
-    .orbit{width:min(310px,75vw);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--pink),var(--blue),#7544ff);padding:7px;box-shadow:0 0 70px #5b45ff55;position:relative}
-    .portrait{width:100%;height:100%;border-radius:50%;background:linear-gradient(145deg,#182b57,#0c1230);display:grid;place-items:center;text-align:center;padding:25px;border:5px solid var(--bg)}
-    .portrait .initial{font-size:5rem;line-height:1;font-weight:950;background:linear-gradient(120deg,#ff63df,#30d4ff);background-clip:text;color:transparent}
-    .portrait small{color:var(--muted);max-width:180px}
-    .floating{position:absolute;right:0;bottom:22px;background:#101b3d;border:1px solid var(--line);border-radius:16px;padding:13px 17px;box-shadow:var(--shadow);transform:rotate(3deg)}
-    .floating strong{display:block;color:#61e9ff}
-    section{padding:34px 0 50px;scroll-margin-top:90px}
-    .section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:24px}
-    .section-head h2{margin:0;font-size:clamp(1.65rem,4vw,2.2rem)}
-    .section-head p{color:var(--muted);margin:0;max-width:570px}
-    .accent-line{width:70px;height:4px;border-radius:9px;background:linear-gradient(90deg,var(--pink),var(--blue));margin-top:10px}
-    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-    .card{background:linear-gradient(145deg,#101a3bdf,#0b1430ee);border:1px solid var(--line);border-radius:22px;padding:25px;box-shadow:var(--shadow)}
-    .card p{color:var(--muted);margin-bottom:0}
-    .facts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
-    .fact{padding:13px;border-radius:14px;background:#ffffff08;border:1px solid var(--line)}
-    .fact b{display:block;color:#76e6ff}
-    .skills{display:flex;flex-wrap:wrap;gap:11px;margin-top:18px}
-    .skill{padding:10px 14px;border:1px solid #6e8bff70;border-radius:12px;background:#1b2b5b88}
-    .skill:nth-child(3n+1){border-color:#e84dff80}.skill:nth-child(3n+2){border-color:#00d5ff80}.skill:nth-child(3n){border-color:#16e5ad80}
-    .projects,.services{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
-    .project-card,.service-card{background:linear-gradient(145deg,#101a3b,#0a122b);border:1px solid var(--line);border-radius:19px;overflow:hidden;transition:transform .2s,border-color .2s}
-    .project-card:hover,.service-card:hover{transform:translateY(-5px);border-color:#8b72ff}
-    .project-art{height:150px;display:grid;place-items:center;font-size:2.7rem;background:radial-gradient(circle at 20% 25%,#ff55d955,transparent 35%),linear-gradient(135deg,#171e56,#102b51,#251046)}
-    .project-body{padding:18px}
-    .project-body h3,.service-card h3{margin:0 0 8px}
-    .project-body p,.service-card p{color:var(--muted);font-size:.94rem;margin:0 0 15px}
-    .tag{display:inline-block;font-size:.78rem;color:#8beaff;background:#0b52664d;padding:4px 9px;border-radius:99px;margin:0 5px 5px 0}
-    .small-link{display:inline-flex;color:#7eeaff;font-weight:750;margin-top:8px}
-    .services{grid-template-columns:repeat(4,1fr)}
-    .service-card{padding:20px}
-    .service-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(135deg,#b829ff,#087dff);font-size:1.35rem;margin-bottom:14px}
-    .contact-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:20px}
-    .contact-list{display:grid;gap:12px;margin-top:18px}
-    .contact-item{display:flex;align-items:center;gap:12px;padding:13px;border-radius:14px;background:#ffffff08;border:1px solid var(--line);overflow-wrap:anywhere}
-    .contact-item .emoji{font-size:1.3rem}
-    form{display:grid;gap:12px}
-    input,textarea{width:100%;padding:13px 15px;border-radius:12px;border:1px solid #6d86ba66;background:#080f27;color:var(--text);font:inherit;outline:none}
-    input:focus,textarea:focus{border-color:#41cfff;box-shadow:0 0 0 3px #41cfff18}
-    textarea{min-height:125px;resize:vertical}
-    .form-note{font-size:.82rem;color:var(--muted);margin:0}
-    footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:.9rem}
-    .footer-inner{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .light{--bg:#f4f6ff;--panel:#fff;--panel2:#edf1ff;--text:#10162e;--muted:#56617e;--line:rgba(41,66,130,.18);background:radial-gradient(ellipse at 0% 0%,#edc7ff 0,transparent 34%),radial-gradient(ellipse at 100% 20%,#c4eaff 0,transparent 32%),var(--bg)}
-    .light .topbar{background:#f5f7ffdf}.light .card,.light .project-card,.light .service-card{background:#ffffffd9}.light .portrait{background:linear-gradient(145deg,#e4eaff,#fff)}.light .floating{background:#fff}.light input,.light textarea{background:#fff;color:var(--text)}
-    @media(max-width:850px){.navlinks{gap:12px}.hero-grid{gap:20px}.services{grid-template-columns:repeat(2,1fr)}.projects{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:680px){nav{min-height:66px}.menu-btn{display:inline-flex}.navlinks{display:none;position:absolute;top:65px;left:4%;right:4%;padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:17px;flex-direction:column;align-items:stretch;gap:0;box-shadow:var(--shadow)}.navlinks.open{display:flex}.navlinks a{padding:10px}.nav-actions .btn{display:none}.hero{padding:48px 0 38px}.hero-grid{grid-template-columns:1fr}.portrait-wrap{min-height:280px;order:-1}.orbit{width:230px}.portrait .initial{font-size:4rem}.floating{right:4%;bottom:0}.about-grid,.contact-grid{grid-template-columns:1fr}.projects{grid-template-columns:1fr}.project-art{height:130px}.section-head{align-items:start;flex-direction:column}.card{padding:20px}.facts{grid-template-columns:1fr 1fr}}
-    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto;transition:none!important}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07152e">
+<title>PARVEZ TV — M3U Playlist Editor</title>
+<style>
+:root{--bg:#061126;--panel:#091d3b;--panel2:#0c2850;--line:#14558a;--blue:#087cff;--cyan:#22d3ee;--purple:#8b5cf6;--pink:#ec4899;--green:#10d79a;--red:#fb3655;--text:#eef6ff;--muted:#9bb5d5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#102c68 0,transparent 36%),radial-gradient(ellipse at 90% 10%,#42146d 0,transparent 28%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif}
+header{padding:20px clamp(14px,3vw,36px);background:linear-gradient(105deg,#0759c9,#4b22c7 55%,#c20c83);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid #44c8ff}
+.brand{display:flex;align-items:center;gap:14px}.logo{width:58px;height:48px;border:4px solid #29dafa;border-radius:13px;display:grid;place-items:center;font-size:26px;box-shadow:0 0 22px #00c8ff66}.brand h1{font-size:clamp(21px,3.2vw,35px);margin:0;line-height:1.15}.brand h1 span{color:#ffd62e}.brand p{margin:5px 0 0;color:#e1eaff;font-size:13px}.rightbrand{text-align:right;font-weight:900;font-size:clamp(18px,2.5vw,28px);font-style:italic}.rightbrand small{display:block;font-size:11px;font-weight:500;font-style:normal}
+main{max-width:1600px;margin:auto;padding:18px;display:grid;gap:14px}.card{background:linear-gradient(145deg,#092044ed,#06162fee);border:1px solid var(--line);border-radius:13px;padding:15px;box-shadow:0 10px 28px #0002;min-width:0}.card h2,.card h3{margin:0 0 13px;font-size:18px}.loadgrid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(220px,1fr);gap:12px}.urlrow{display:flex;gap:9px}.input{width:100%;min-width:0;background:#102c52;border:1px solid #2b5689;color:#fff;padding:12px;border-radius:8px;font:inherit;outline:none}.input:focus,textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 2px #22d3ee20}button,.filebutton{cursor:pointer;border:1px solid transparent;border-radius:8px;padding:11px 14px;color:white;background:linear-gradient(110deg,#087cff,#0756d6);font:600 13px system-ui;transition:.15s;white-space:nowrap}button:hover,.filebutton:hover{filter:brightness(1.15);transform:translateY(-1px)}button:disabled{opacity:.45;cursor:not-allowed}.green{background:linear-gradient(110deg,#06b981,#00a66d)}.purple{background:linear-gradient(110deg,#8b22ef,#5b20d4)}.red{background:linear-gradient(110deg,#ff465b,#d91236)}.gray{background:#102b4e;border-color:#2c5b8b}.filebox{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-left:1px dashed #3172a6;padding:4px 0 4px 18px}.filebox input{max-width:100%;font-size:12px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{border:1px solid #14558a;border-radius:10px;padding:13px;background:linear-gradient(140deg,#073c47,#071d39)}.stat:nth-child(2){background:linear-gradient(140deg,#0a3974,#071d39)}.stat:nth-child(3){background:linear-gradient(140deg,#482079,#071d39)}.stat span{display:block;color:#6df3ee;font-size:12px}.stat strong{font-size:25px;display:block;margin-top:3px}
+.workspace{display:grid;grid-template-columns:minmax(270px,1.05fr) minmax(300px,1.25fr) minmax(280px,1fr);gap:14px;align-items:stretch}.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.pill{padding:7px 10px;font-size:12px;background:#10274b;border:1px solid #24527d}.pill.active{background:linear-gradient(100deg,#0787ff,#4838ee)}.channel-list{max-height:540px;overflow:auto;border:1px solid #103b66;border-radius:8px}.channel{display:flex;align-items:center;gap:9px;padding:9px;border-bottom:1px solid #10365b;cursor:pointer;background:#071a34}.channel:hover{background:#0e2b53}.channel.selected{background:linear-gradient(90deg,#0759bd,#09234b);outline:1px solid #1daaff}.chicon{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;background:#12385d;font-size:18px}.chtext{min-width:0;flex:1}.chtext b{display:block;font-size:13px;overflow-wrap:anywhere}.chtext small{color:#58e4db;font-size:11px}.edithead{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.edithead h2{margin:0}.formgrid{display:grid;grid-template-columns:1fr;gap:11px}.field label{display:block;font-size:12px;color:#b7cce7;margin:0 0 5px}.preview{display:flex;gap:12px;align-items:center;margin:10px 0}.previewlogo{width:65px;height:65px;border:1px solid #28618c;background:#fff;border-radius:9px;display:grid;place-items:center;color:#0b3971;font-weight:800;overflow:hidden}.previewlogo img{width:100%;height:100%;object-fit:contain}.previewlogo .fallback{font-size:23px;color:#087cff}.actionrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.actionrow button{flex:1}.codearea{width:100%;height:475px;resize:vertical;background:#031128;border:1px solid #16436e;border-radius:8px;color:#79e8ee;padding:12px;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre;overflow:auto}.codefoot{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:9px}.status{font-size:12px;color:#86f6d2;min-height:18px;margin-top:8px}.bottom{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;border:1px solid #2456a0;border-radius:12px;overflow:hidden;background:linear-gradient(90deg,#075c4b,#37166f,#084d9b)}.bottom div{padding:16px;text-align:center;background:#071b31aa}.bottom b{display:block}.bottom small{color:#b4c9e7}.hidden{display:none!important}.empty{padding:25px;text-align:center;color:var(--muted)}footer{text-align:center;color:#8da9ca;font-size:12px;padding:4px 10px 20px}
+@media(max-width:1100px){.workspace{grid-template-columns:1fr 1fr}.codecard{grid-column:1/-1}.codearea{height:280px}}@media(max-width:700px){header{padding:15px}.rightbrand{display:none}main{padding:10px}.loadgrid{grid-template-columns:1fr}.filebox{border-left:0;border-top:1px dashed #3172a6;padding:12px 0 0}.stats{gap:6px}.stat{padding:10px}.stat strong{font-size:21px}.workspace{grid-template-columns:1fr}.codecard{grid-column:auto}.channel-list{max-height:380px}.bottom{grid-template-columns:1fr 1fr}.urlrow{flex-wrap:wrap}.urlrow button{flex:1}.card{padding:12px}.brand h1{font-size:22px}}
+</style>
 </head>
 <body>
-<header class="topbar">
-  <nav class="container" aria-label="প্রধান মেনু">
-    <a class="brand" href="#home" aria-label="PARVEZ Home"><span class="brand-mark">P</span><span>PARVEZ</span></a>
-    <div class="navlinks" id="navlinks">
-      <a href="#home">Home</a><a href="#about">About</a><a href="#skills">Skills</a><a href="#projects">Projects</a><a href="#services">Services</a><a href="#contact">Contact</a>
-    </div>
-    <div class="nav-actions">
-      <button class="theme-btn" id="themeToggle" aria-label="রঙ পরিবর্তন করুন">☼ / ☾</button>
-      <a class="btn" href="#contact">যোগাযোগ করুন ↗</a>
-      <button class="menu-btn" id="menuToggle" aria-label="মেনু খুলুন" aria-expanded="false">☰</button>
-    </div>
-  </nav>
-</header>
-
+<header><div class="brand"><div class="logo">▶</div><div><h1>M3U Playlist <span>Editor</span></h1><p>Load • Edit • Manage • Download</p></div></div><div class="rightbrand">PARVEZ TV<small>Live TV · Entertainment · Always With You</small></div></header>
 <main>
-  <section class="hero" id="home">
-    <div class="container hero-grid">
-      <div>
-        <span class="eyebrow">👋 স্বাগতম আমার পোর্টফোলিওতে</span>
-        <h1><span class="gradient-text">PARVEZ</span></h1>
-        <h2>Web Designer <span class="gradient-text">&</span> Online TV Service</h2>
-        <p>আমি পারভেজ। আধুনিক, সুন্দর ও মোবাইল-ফ্রেন্ডলি ওয়েবসাইট তৈরি এবং অনলাইন টিভি সার্ভিস-সংক্রান্ত কাজে আগ্রহী। আপনার আইডিয়াকে অনলাইনে সুন্দরভাবে উপস্থাপন করাই আমার লক্ষ্য।</p>
-        <div class="hero-buttons"><a class="btn" href="#contact">✦ কাজের জন্য যোগাযোগ</a><a class="btn secondary" href="#projects">আমার কাজ দেখুন ↓</a></div>
-        <div class="socials" aria-label="সোশ্যাল লিংক">
-          <!-- নিজের আসল লিংকগুলো বসান -->
-          <a href="#contact" aria-label="Facebook">f</a><a href="#contact" aria-label="YouTube">▶</a><a href="#contact" aria-label="WhatsApp">☏</a><a href="#contact" aria-label="Email">✉</a>
-        </div>
-      </div>
-      <div class="portrait-wrap">
-        <div class="orbit"><div class="portrait"><div><div class="initial">P</div><strong>PARVEZ</strong><br><small>আপনার ছবি এখানে যোগ করুন</small></div></div></div>
-        <div class="floating">💡 <strong>Dream • Design • Create</strong><span style="font-size:.8rem;color:var(--muted)">Ideas into digital experiences</span></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="about">
-    <div class="container">
-      <div class="section-head"><div><h2>About <span class="gradient-text">Me</span></h2><div class="accent-line"></div></div><p>আমার পরিচয়, কাজের ধরন এবং শেখার যাত্রা।</p></div>
-      <div class="about-grid">
-        <article class="card"><h3>👨‍💻 আমি PARVEZ</h3><p>আমি একজন ওয়েব ডিজাইন ও অনলাইন টিভি সার্ভিস-প্রেমী ডিজিটাল ক্রিয়েটর। নতুন প্রযুক্তি শেখা, ওয়েবসাইটের ডিজাইন উন্নত করা এবং ব্যবহারকারীর জন্য সহজ অভিজ্ঞতা তৈরি করতে ভালোবাসি।</p><div class="facts"><div class="fact"><b>📍 অবস্থান</b><span>বাংলাদেশ</span></div><div class="fact"><b>🎯 লক্ষ্য</b><span>স্মার্ট ডিজিটাল সেবা</span></div></div></article>
-        <article class="card" id="skills"><h3>⚡ My Skills</h3><p>আপনার বাস্তব দক্ষতা অনুযায়ী তালিকাটি পরিবর্তন করুন।</p><div class="skills"><span class="skill">🌐 HTML & CSS</span><span class="skill">🎨 Web Design</span><span class="skill">📱 Responsive UI</span><span class="skill">▶ Online TV / IPTV</span><span class="skill">🐙 GitHub Pages</span><span class="skill">🧩 Website Setup</span></div></article>
-      </div>
-    </div>
-  </section>
-
-  <section id="projects">
-    <div class="container">
-      <div class="section-head"><div><h2>My <span class="gradient-text">Projects</span></h2><div class="accent-line"></div></div><p>এখানে আপনার তৈরি ওয়েবসাইট, কাজ বা ডেমোর লিংক যোগ করুন।</p></div>
-      <div class="projects">
-        <article class="project-card"><div class="project-art">📺</div><div class="project-body"><h3>PARVEZ TV</h3><p>অনলাইন টিভি সার্ভিসের জন্য একটি পরিচ্ছন্ন ওয়েব অভিজ্ঞতার ধারণা।</p><span class="tag">Online TV</span><span class="tag">Web UI</span><br><a class="small-link" href="#contact">প্রজেক্টের লিংক যোগ করুন ↗</a></div></article>
-        <article class="project-card"><div class="project-art">💻</div><div class="project-body"><h3>Personal Portfolio</h3><p>নিজের পরিচয়, দক্ষতা ও সার্ভিস তুলে ধরার ব্যক্তিগত ওয়েবসাইট।</p><span class="tag">Portfolio</span><span class="tag">Responsive</span><br><a class="small-link" href="#contact">প্রজেক্টের লিংক যোগ করুন ↗</a></div></article>
-        <article class="project-card"><div class="project-art">✨</div><div class="project-body"><h3>Creative Website</h3><p>ব্যবসা, কনটেন্ট বা অনলাইন সেবার জন্য আধুনিক ওয়েব ডিজাইনের নমুনা।</p><span class="tag">Creative</span><span class="tag">Design</span><br><a class="small-link" href="#contact">প্রজেক্টের লিংক যোগ করুন ↗</a></div></article>
-      </div>
-    </div>
-  </section>
-
-  <section id="services">
-    <div class="container">
-      <div class="section-head"><div><h2>My <span class="gradient-text">Services</span></h2><div class="accent-line"></div></div><p>আপনি যে সেবাগুলো সত্যিই দেন, সেগুলো এখানে রাখুন।</p></div>
-      <div class="services">
-        <article class="service-card"><div class="service-icon">🎨</div><h3>Web Design</h3><p>আধুনিক ও সুন্দর ওয়েবসাইটের ডিজাইন।</p></article>
-        <article class="service-card"><div class="service-icon">📺</div><h3>Online TV Service</h3><p>নিজস্ব বা অনুমোদিত স্ট্রিমের জন্য ওয়েব সেটআপ সহায়তা।</p></article>
-        <article class="service-card"><div class="service-icon">📱</div><h3>Responsive Website</h3><p>মোবাইল, ট্যাবলেট ও কম্পিউটারের উপযোগী লেআউট।</p></article>
-        <article class="service-card"><div class="service-icon">🛠️</div><h3>Website Support</h3><p>বেসিক আপডেট, পেজ সেটআপ ও প্রকাশে সহায়তা।</p></article>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <div class="container">
-      <div class="section-head"><div><h2>Contact <span class="gradient-text">Me</span></h2><div class="accent-line"></div></div><p>আপনার প্রজেক্ট নিয়ে কথা বলতে নিচের যোগাযোগের তথ্য আপডেট করুন।</p></div>
-      <div class="contact-grid">
-        <article class="card"><h3>চলুন একসঙ্গে কাজ করি! 🚀</h3><p>আপনার প্রয়োজন ও প্রজেক্টের সংক্ষিপ্ত বিবরণ জানাতে পারেন।</p><div class="contact-list">
-          <a class="contact-item" href="mailto:your-email@example.com"><span class="emoji">✉️</span><span><b>Email</b><br>your-email@example.com</span></a>
-          <a class="contact-item" href="https://wa.me/8801XXXXXXXXX"><span class="emoji">💬</span><span><b>WhatsApp</b><br>আপনার নম্বর বসান</span></a>
-          <a class="contact-item" href="https://facebook.com/"><span class="emoji">🌐</span><span><b>Facebook</b><br>আপনার প্রোফাইল লিংক বসান</span></a>
-        </div></article>
-        <article class="card"><h3>✍️ মেসেজ পাঠান</h3><form id="contactForm"><input id="visitorName" name="name" placeholder="আপনার নাম" required><input id="visitorEmail" name="email" type="email" placeholder="আপনার ইমেইল" required><textarea id="visitorMessage" name="message" placeholder="আপনার মেসেজ লিখুন..." required></textarea><button class="btn" type="submit">✉️ ইমেইলে মেসেজ তৈরি করুন</button><p class="form-note">এটি আপনার ইমেইল অ্যাপ খুলবে। সরাসরি ফর্ম জমা নিতে আলাদা ব্যাকএন্ড/ফর্ম সার্ভিস লাগবে।</p></form></article>
-      </div>
-    </div>
-  </section>
+<section class="loadgrid">
+<div class="card"><h2>🔗 M3U Playlist লোড করুন</h2><div class="urlrow"><input id="playlistUrl" class="input" type="url" placeholder="আপনার M3U URL এখানে পেস্ট করুন…"><button id="loadUrl">☁ Load M3U</button></div><div id="loadStatus" class="status"></div></div>
+<div class="card"><h2>📁 অথবা M3U ফাইল আপলোড</h2><div class="filebox"><input id="fileInput" type="file" accept=".m3u,.m3u8,.txt,audio/x-mpegurl,application/vnd.apple.mpegurl"><button class="gray" id="blankBtn">নতুন প্লেলিস্ট</button></div><div class="status">URL লোড না হলে ফাইল আপলোড করে দেখুন।</div></div>
+</section>
+<section class="stats"><div class="stat"><span>▣ মোট চ্যানেল</span><strong id="totalStat">0</strong></div><div class="stat"><span>▤ ক্যাটাগরি</span><strong id="categoryStat">0</strong></div><div class="stat"><span>⇩ ফাইল সাইজ</span><strong id="sizeStat">0 KB</strong></div></section>
+<section class="workspace">
+<div class="card"><h2>▣ চ্যানেল তালিকা</h2><input id="search" class="input" placeholder="চ্যানেল খুঁজুন…" aria-label="চ্যানেল খুঁজুন"><div class="toolbar" id="categoryFilters"><button class="pill active" data-cat="*">সব (0)</button></div><div id="channels" class="channel-list"><div class="empty">M3U লিংক দিন অথবা ফাইল আপলোড করুন।</div></div><div class="actionrow"><button id="addBtn">＋ নতুন চ্যানেল</button><button id="deleteBtn" class="red">▤ মুছুন</button></div></div>
+<div class="card"><div class="edithead"><h2>✎ চ্যানেল এডিট</h2><button id="saveBtn" class="green">▣ পরিবর্তন প্রয়োগ</button></div><div id="editEmpty" class="empty">এডিট করতে তালিকা থেকে একটি চ্যানেল বেছে নিন, অথবা নতুন চ্যানেল যোগ করুন।</div><div id="editForm" class="hidden"><div class="preview"><div id="logoPreview" class="previewlogo"><span class="fallback">▶</span></div><div style="flex:1;min-width:0"><div class="field"><label for="logo">লোগো URL (ঐচ্ছিক)</label><input id="logo" class="input" placeholder="https://example.com/logo.png"></div></div></div><div class="formgrid"><div class="field"><label for="name">চ্যানেলের নাম</label><input id="name" class="input" placeholder="চ্যানেলের নাম"></div><div class="field"><label for="category">ক্যাটাগরি</label><input id="category" class="input" list="categoryOptions" placeholder="যেমন: Bangladeshi"><datalist id="categoryOptions"></datalist></div><div class="field"><label for="url">Stream URL</label><input id="url" class="input" placeholder="https://example.com/live.m3u8"></div><div class="field"><label for="tvgid">TVG ID (ঐচ্ছিক)</label><input id="tvgid" class="input" placeholder="channel.id"></div></div><div class="actionrow"><button id="applyBtn" class="green">✓ এডিট প্রয়োগ</button><button id="cancelBtn" class="gray">বাতিল</button></div><div id="editStatus" class="status"></div></div></div>
+<div class="card codecard"><div class="edithead"><h2>‹/› M3U কোড এডিটর</h2><button id="formatBtn" class="gray">Format</button></div><p style="font-size:12px;color:var(--muted);margin:0 0 10px">এখানে সরাসরি M3U কোড বদলাতে পারবেন। “কোড থেকে তালিকা” চাপলে কোডটি তালিকায় প্রয়োগ হবে।</p><textarea id="code" class="codearea" spellcheck="false">#EXTM3U</textarea><div class="actionrow"><button id="applyCode" class="purple">কোড থেকে তালিকা</button><button id="syncCode" class="gray">তালিকা → কোড</button></div><div class="codefoot"><span id="codeInfo">Lines: 1</span><button id="downloadBtn" class="green">⬇ .m3u ডাউনলোড</button></div><div id="codeStatus" class="status"></div></div>
+</section>
+<section class="bottom"><div>⚡ <b>দ্রুত ব্যবহার</b><small>URL বা ফাইল থেকে লোড</small></div><div>✎ <b>সহজ এডিট</b><small>নাম, URL, ক্যাটাগরি</small></div><div>⬇ <b>এক ক্লিকে ডাউনলোড</b><small>আপডেট করা .m3u</small></div><div>▣ <b>মোবাইল উপযোগী</b><small>ফোন ও কম্পিউটার</small></div></section>
+<footer>PARVEZ TV · M3U Playlist Editor — আপনার প্লেলিস্ট, আপনার নিয়ন্ত্রণ।<br>শুধু আপনার ব্যবহারের অধিকার আছে এমন প্লেলিস্ট ও স্ট্রিম ব্যবহার করুন।</footer>
 </main>
-<footer><div class="container footer-inner"><span>© <span id="year"></span> PARVEZ. All rights reserved.</span><span>Made with 💜 in Bangladesh</span></div></footer>
 <script>
-  const menuToggle=document.getElementById('menuToggle');
-  const navlinks=document.getElementById('navlinks');
-  menuToggle.addEventListener('click',()=>{const open=navlinks.classList.toggle('open');menuToggle.setAttribute('aria-expanded',String(open));});
-  navlinks.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{navlinks.classList.remove('open');menuToggle.setAttribute('aria-expanded','false');}));
-  document.getElementById('themeToggle').addEventListener('click',()=>document.body.classList.toggle('light'));
-  document.getElementById('year').textContent=new Date().getFullYear();
-  document.getElementById('contactForm').addEventListener('submit',function(e){
-    e.preventDefault();
-    const name=document.getElementById('visitorName').value.trim();
-    const email=document.getElementById('visitorEmail').value.trim();
-    const message=document.getElementById('visitorMessage').value.trim();
-    const subject=encodeURIComponent('Portfolio contact from '+name);
-    const body=encodeURIComponent('Name: '+name+'\nEmail: '+email+'\n\nMessage:\n'+message);
-    window.location.href='mailto:your-email@example.com?subject='+subject+'&body='+body;
-  });
+(()=> {
+const $=id=>document.getElementById(id);
+let channels=[],selected=-1,activeCat='*',dirty=false;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function parseM3U(text){
+ const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/); const out=[]; let meta=null;
+ for(const raw of lines){const line=raw.trim();if(!line)continue;
+  if(line.startsWith('#EXTINF:')){meta=line;continue}
+  if(line.startsWith('#'))continue;
+  if(meta){const comma=meta.indexOf(',');const attrs=meta.slice(0,comma<0?undefined:comma);const name=comma<0?'Unnamed channel':meta.slice(comma+1).trim();
+   const getAttr=k=>{const re=new RegExp('(?:^|\\\\s)'+k+'="([^"]*)"','i');return (attrs.match(re)||[])[1]||''};
+   out.push({name:name||'Unnamed channel',url:line,category:getAttr('group-title')||'Uncategorized',logo:getAttr('tvg-logo'),tvgid:getAttr('tvg-id'),rawMeta:meta});meta=null;
+  }else if(/^https?:\/\//i.test(line)){out.push({name:line.split('/').pop()||'Stream',url:line,category:'Uncategorized',logo:'',tvgid:'',rawMeta:''});}
+ }
+ return out;
+}
+function quoteAttr(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}
+function buildM3U(){return '#EXTM3U\n'+channels.map(c=>`#EXTINF:-1 tvg-id="${quoteAttr(c.tvgid)}" tvg-logo="${quoteAttr(c.logo)}" group-title="${quoteAttr(c.category)}",${String(c.name||'Unnamed channel').replace(/[\r\n]/g,' ')}\n${String(c.url||'').trim()}`).join('\n')+(channels.length?'\n':'')}
+function syncCode(){ $('code').value=buildM3U();updateStats();updateCodeInfo()}
+function updateStats(){ $('totalStat').textContent=channels.length; $('categoryStat').textContent=new Set(channels.map(c=>c.category||'Uncategorized')).size;const n=new Blob([buildM3U()]).size;$('sizeStat').textContent=n<1024?n+' B':(n/1024).toFixed(1)+' KB';}
+function updateCodeInfo(){const t=$('code').value;$('codeInfo').textContent='Lines: '+(t? t.split(/\r?\n/).length:0)+' · '+new Blob([t]).size+' bytes'}
+function renderFilters(){const cats=[...new Set(channels.map(c=>c.category||'Uncategorized'))].sort();$('categoryFilters').innerHTML=`<button class="pill ${activeCat==='*'?'active':''}" data-cat="*">সব (${channels.length})</button>`+cats.map(c=>`<button class="pill ${activeCat===c?'active':''}" data-cat="${esc(c)}">${esc(c)} (${channels.filter(x=>(x.category||'Uncategorized')===c).length})</button>`).join('');$('categoryOptions').innerHTML=cats.map(c=>`<option value="${esc(c)}">`).join('')}
+function renderChannels(){renderFilters();const q=$('search').value.trim().toLowerCase();const shown=channels.map((c,i)=>({...c,i})).filter(c=>(activeCat==='*'||(c.category||'Uncategorized')===activeCat)&&[c.name,c.url,c.category].some(v=>String(v||'').toLowerCase().includes(q)));$('channels').innerHTML=shown.length?shown.map(c=>`<div class="channel ${selected===c.i?'selected':''}" data-index="${c.i}"><div class="chicon">${c.logo?`<img src="${esc(c.logo)}" alt="" style="width:100%;height:100%;object-fit:contain;background:white;border-radius:8px" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'▶'}))">`:'▶'}</div><div class="chtext"><b>${esc(c.name||'Unnamed channel')}</b><small>▣ ${esc(c.category||'Uncategorized')}</small></div><span style="color:#56d6ff">✎</span></div>`).join(''):'<div class="empty">কোনো চ্যানেল পাওয়া যায়নি।</div>';$('channels').querySelectorAll('.channel').forEach(el=>el.addEventListener('click',()=>selectChannel(+el.dataset.index)));updateStats()}
+function selectChannel(i){selected=i;const c=channels[i];$('editEmpty').classList.add('hidden');$('editForm').classList.remove('hidden');$('name').value=c?.name||'';$('url').value=c?.url||'';$('category').value=c?.category||'';$('logo').value=c?.logo||'';$('tvgid').value=c?.tvgid||'';previewLogo();$('editStatus').textContent='';renderChannels()}
+function previewLogo(){const src=$('logo').value.trim();$('logoPreview').innerHTML=src?`<img src="${esc(src)}" alt="Logo" onerror="this.parentElement.innerHTML='<span class=&quot;fallback&quot;>▶</span>'">`:'<span class="fallback">▶</span>'}
+function applyEdit(){if(selected<0||selected>=channels.length)return;const name=$('name').value.trim(),url=$('url').value.trim();if(!name||!url){$('editStatus').textContent='চ্যানেলের নাম এবং Stream URL দিতে হবে।';return}channels[selected]={...channels[selected],name,url,category:$('category').value.trim()||'Uncategorized',logo:$('logo').value.trim(),tvgid:$('tvgid').value.trim()};activeCat='*';syncCode();renderChannels();selectChannel(selected);$('editStatus').textContent='পরিবর্তন প্রয়োগ হয়েছে।'}
+function loadText(text,label){channels=parseM3U(text);selected=-1;activeCat='*';$('editEmpty').classList.remove('hidden');$('editForm').classList.add('hidden');$('loadStatus').textContent=`${label}: ${channels.length}টি চ্যানেল পাওয়া গেছে।`;syncCode();renderChannels();$('codeStatus').textContent='';}
+$('loadUrl').addEventListener('click',async()=>{const url=$('playlistUrl').value.trim();if(!url){$('loadStatus').textContent='আগে M3U URL দিন।';return}try{new URL(url)}catch{$('loadStatus').textContent='সঠিক URL দিন।';return} $('loadUrl').disabled=true;$('loadStatus').textContent='লোড হচ্ছে…';try{const res=await fetch(url);if(!res.ok)throw new Error('HTTP '+res.status);const text=await res.text();if(!text.trim())throw new Error('ফাইল খালি');loadText(text,'URL থেকে লোড সফল')}catch(e){$('loadStatus').textContent='URL লোড হয়নি: '+e.message+'. এটি CORS/সার্ভার সীমাবদ্ধতা হতে পারে—ফাইল ডাউনলোড করে নিচের File Upload ব্যবহার করুন।'}finally{$('loadUrl').disabled=false}});
+$('fileInput').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;loadText(await f.text(),f.name);});
+$('blankBtn').addEventListener('click',()=>{channels=[];selected=-1;activeCat='*';$('playlistUrl').value='';$('search').value='';$('editEmpty').classList.remove('hidden');$('editForm').classList.add('hidden');$('loadStatus').textContent='নতুন খালি প্লেলিস্ট তৈরি হয়েছে।';syncCode();renderChannels()});
+$('search').addEventListener('input',renderChannels);$('categoryFilters').addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(b){activeCat=b.dataset.cat;renderChannels()}});
+$('saveBtn').addEventListener('click',applyEdit);$('applyBtn').addEventListener('click',applyEdit);$('logo').addEventListener('input',previewLogo);$('cancelBtn').addEventListener('click',()=>{if(selected>=0)selectChannel(selected);else{$('editForm').classList.add('hidden');$('editEmpty').classList.remove('hidden')}});
+$('addBtn').addEventListener('click',()=>{channels.push({name:'নতুন চ্যানেল',url:'https://',category:'Uncategorized',logo:'',tvgid:'',rawMeta:''});selected=channels.length-1;activeCat='*';syncCode();renderChannels();selectChannel(selected);$('name').focus()});
+$('deleteBtn').addEventListener('click',()=>{if(selected<0||selected>=channels.length){$('editStatus').textContent='আগে একটি চ্যানেল নির্বাচন করুন।';return}if(!confirm('এই চ্যানেলটি মুছে ফেলবেন?'))return;channels.splice(selected,1);selected=-1;$('editForm').classList.add('hidden');$('editEmpty').classList.remove('hidden');syncCode();renderChannels()});
+$('applyCode').addEventListener('click',()=>{const parsed=parseM3U($('code').value);if(!/^\s*#EXTM3U/m.test($('code').value)){if(!confirm('কোডে #EXTM3U হেডার নেই। তবুও প্রয়োগ করবেন?'))return}channels=parsed;selected=-1;activeCat='*';$('editForm').classList.add('hidden');$('editEmpty').classList.remove('hidden');renderChannels();syncCode();$('codeStatus').textContent=`কোড থেকে ${channels.length}টি চ্যানেল পড়া হয়েছে।`});
+$('syncCode').addEventListener('click',()=>{syncCode();$('codeStatus').textContent='চ্যানেল তালিকা থেকে কোড আপডেট হয়েছে।'});
+$('formatBtn').addEventListener('click',()=>{const parsed=parseM3U($('code').value);if(parsed.length){channels=parsed;syncCode();renderChannels();$('codeStatus').textContent='M3U কোড ফরম্যাট করা হয়েছে।'}else{$('code').value=$('code').value.trim()+'\n';updateCodeInfo();$('codeStatus').textContent='কোড ট্রিম করা হয়েছে।'}});
+$('code').addEventListener('input',updateCodeInfo);
+$('downloadBtn').addEventListener('click',()=>{const text=$('code').value.trim()||buildM3U();const blob=new Blob([text.endsWith('\n')?text:text+'\n'],{type:'audio/x-mpegurl;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='playlist.m3u';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);$('codeStatus').textContent='playlist.m3u ডাউনলোড শুরু হয়েছে।'});
+syncCode();renderChannels();
+})();
 </script>
 </body>
 </html>

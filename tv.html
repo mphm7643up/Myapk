@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>আমার M3U TV</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif}
+header{padding:18px;text-align:center;background:linear-gradient(90deg,#6138e8,#087fdc,#e83e8c);font-size:25px;font-weight:bold}
+main{max-width:1000px;margin:auto;padding:16px}
+video{width:100%;aspect-ratio:16/9;background:#000;border-radius:14px}
+h2{font-size:20px;margin:22px 0 12px}
+#channels{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}
+.channel{padding:15px 12px;border:1px solid #343c60;border-radius:12px;background:linear-gradient(135deg,#202b50,#17152f);color:white;text-align:left;cursor:pointer;overflow-wrap:anywhere}
+.channel:hover{border-color:#9b7cff;background:linear-gradient(135deg,#3a3473,#183a63)}
+#message{color:#bfc9e9;font-size:14px;line-height:1.7}
+</style>
+</head>
+<body>
+<header>📺 আমার M3U TV</header>
+<main>
+  <video id="player" controls playsinline></video>
+  <h2>📡 সকল টিভি চ্যানেল</h2>
+  <p id="message">চ্যানেল লোড হচ্ছে...</p>
+  <div id="channels"></div>
+</main>
+
+<script>
+// ⬇️ এখানে আপনার M3U লিংক দিন
+const M3U_LINK = "এখানে_আপনার_M3U_লিংক_বসান";
+
+async function শুরু() {
+  const বার্তা = document.getElementById("message");
+  const তালিকা = document.getElementById("channels");
+
+  if (M3U_LINK.includes("এখানে_আপনার")) {
+    বার্তা.textContent = "প্রথমে কোডের উপরে M3U_LINK-এর জায়গায় আপনার M3U লিংক বসান।";
+    return;
+  }
+
+  try {
+    const উত্তর = await fetch(M3U_LINK);
+    if (!উত্তর.ok) throw new Error("লিংক খোলা যায়নি");
+    const লেখা = await উত্তর.text();
+    const লাইন = লেখা.split(/\r?\n/);
+    let নাম = "নামহীন চ্যানেল";
+    let সংখ্যা = 0;
+
+    for (const কাঁচা of লাইন) {
+      const ল = কাঁচা.trim();
+      if (ল.startsWith("#EXTINF")) {
+        নাম = (ল.split(",").pop() || "নামহীন চ্যানেল").trim();
+      } else if (ল && !ল.startsWith("#") && /^https?:\/\//i.test(ল)) {
+        const চ্যানেলেরনাম = নাম;
+        const লিংক = ল;
+        const বোতাম = document.createElement("button");
+        বোতাম.className = "channel";
+        বোতাম.textContent = "▶ " + চ্যানেলেরনাম;
+        বোতাম.onclick = () => {
+          const প্লেয়ার = document.getElementById("player");
+          প্লেয়ার.src = লিংক;
+          প্লেয়ার.play().catch(() => {
+            বার্তা.textContent = "এই চ্যানেলটি ব্রাউজারে চালানো যাচ্ছে না। অন্য চ্যানেল চেষ্টা করুন।";
+          });
+          বার্তা.textContent = "নির্বাচিত চ্যানেল: " + চ্যানেলেরনাম;
+        };
+        তালিকা.appendChild(বোতাম);
+        সংখ্যা++;
+        নাম = "নামহীন চ্যানেল";
+      }
+    }
+
+    বার্তা.textContent = সংখ্যা
+      ? "মোট " + সংখ্যা + "টি চ্যানেল পাওয়া গেছে। চালাতে চ্যানেলের নাম চাপ দিন।"
+      : "কোনো চ্যানেল পাওয়া যায়নি। M3U লিংক পরীক্ষা করুন।";
+  } catch (ত্রুটি) {
+    বার্তা.textContent = "চ্যানেল লোড হয়নি। লিংকটি ঠিক আছে কি না দেখুন; সার্ভার ব্রাউজার থেকে অ্যাক্সেস বন্ধ রাখতে পারে।";
+  }
+}
+শুরু();
+</script>
+</body>
+</html>

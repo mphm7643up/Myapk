@@ -11,7 +11,7 @@
 <style>
 :root{--bg:#f7f5ff;--panel:#fff;--ink:#211b38;--muted:#77708f;--line:#e7e0ff;--purple:#6659f5;--violet:#8b55f6;--pink:#d44aae}
 *{box-sizing:border-box}
-body{margin:0;padding:18px;background:linear-gradient(135deg,#fbfaff,#f0edff);color:var(--ink);font-family:Arial,"Noto Sans Bengali",sans-serif}
+body{margin:0;padding:18px;background:radial-gradient(ellipse at 12% 18%,#e8e5ff 0%,transparent 42%),radial-gradient(ellipse at 88% 72%,#f7e8ff 0%,transparent 44%),linear-gradient(135deg,#fdfcff 0%,#f5f1ff 52%,#fff7fc 100%);color:var(--ink);font-family:Arial,"Noto Sans Bengali",sans-serif}
 .main{max-width:1600px;margin:auto;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);gap:18px}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 10px 30px #6659f51a}
 .header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
@@ -21,6 +21,9 @@ body{margin:0;padding:18px;background:linear-gradient(135deg,#fbfaff,#f0edff);co
 .player video,.player iframe{width:100%;height:100%;position:absolute;inset:0;border:0}
 #video{object-fit:contain}
 .tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.ticker{margin-top:13px;overflow:hidden;white-space:nowrap;border-radius:10px;padding:11px 0;background:linear-gradient(100deg,var(--purple),var(--violet),var(--pink));color:#fff;font-size:14px;font-weight:800;box-shadow:0 5px 14px #6659f533}
+.ticker span{display:inline-block;padding-left:100%;animation:runTicker 14s linear infinite}
+@keyframes runTicker{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 button,.file-label{border:0;border-radius:10px;padding:10px 14px;background:linear-gradient(120deg,var(--purple),var(--violet));color:#fff;font-weight:bold;cursor:pointer;box-shadow:0 5px 14px #6659f533}
 button:hover,.file-label:hover{filter:brightness(1.06)}
 button.secondary{background:#f0edff;color:#5142ce;box-shadow:none;border:1px solid var(--line)}
@@ -52,16 +55,9 @@ input:focus{border-color:var(--purple);box-shadow:0 0 0 3px #6659f51a}
     <div class="player" id="playerBox">
       <video id="video" controls playsinline preload="metadata"></video>
     </div>
-    <div class="tools">
-      <button class="secondary" onclick="toggleFullscreen()">⛶ ফুল স্ক্রিন</button>
-      <button class="secondary" onclick="togglePip()">▣ ছোট পর্দা</button>
-      <button class="secondary" onclick="stopVideo()">■ বন্ধ</button>
+    <div class="ticker" role="status" aria-label="সার্ভিস নোটিফিকেশন">
+      <span>📢 RUNNING — সার্ভিস চালু আছে</span>
     </div>
-    <div class="inputrow">
-      <input id="playlistInput" type="text" placeholder="এখানে M3U প্লেলিস্টের লিংক দিন">
-      <button onclick="loadPlaylistFromInput()">চ্যানেল আনুন</button>
-    </div>
-    <div class="hint">নোট: ভিডিও চলা নির্ভর করে লিংক, ফরম্যাট, নেটওয়ার্ক এবং সার্ভারের অনুমতির ওপর। কিছু সাইটের লিংক সরাসরি প্লেয়ারে চলবে না।</div>
   </section>
 
   <section class="panel">
@@ -80,7 +76,7 @@ input:focus{border-color:var(--purple);box-shadow:0 0 0 3px #6659f51a}
       <button data-cat="cartoon" onclick="setCategory('cartoon',this)">কার্টুন</button>
     </div>
     <div class="channels" id="channelList"><div class="status">M3U লিংক দিন অথবা প্লেলিস্ট লোড করুন।</div></div>
-    <div class="footer">SHAWON TV · আপনার অনুমোদিত স্ট্রিম লিংক ব্যবহার করুন</div>
+    <div class="footer">Developed by Parvez Hasan</div>
   </section>
 </div>
 
@@ -101,13 +97,14 @@ function classify(name, group='') {
   return 'bangla';
 }
 function parseM3U(text) {
-  const lines = text.replace(/^\uFEFF/,'').split(/\r?\n/);
+  const lines = text.replace(/^\uFEFF/,'').split(/\r?
+/);
   const out=[]; let meta=null;
   for (const raw of lines) {
     const line=raw.trim();
     if (!line) continue;
     if (line.startsWith('#EXTINF')) {
-      const name=(line.split(',').pop()||'চ্যানেল').trim();
+      const comma=line.lastIndexOf(','); const name=(comma>=0 ? line.slice(comma+1) : 'চ্যানেল').trim()||'চ্যানেল';
       const logo=(line.match(/tvg-logo=["']([^"']*)["']/i)||[])[1]||FALLBACK_LOGO;
       const group=(line.match(/group-title=["']([^"']*)["']/i)||[])[1]||'';
       meta={name,logo,group,category:classify(name,group)};
@@ -130,7 +127,7 @@ async function fetchPlaylist(url) {
     if (!parsed.length) throw new Error('এই ফাইলে চ্যানেল পাওয়া যায়নি');
     channels=parsed; renderChannels();
   } catch(e) {
-    showStatus('প্লেলিস্ট লোড হয়নি। লিংক ঠিক আছে কি না দেখুন; সার্ভারের CORS সীমাবদ্ধতাও কারণ হতে পারে।');
+    showStatus('চ্যানেল লোড হয়নি। প্লেলিস্টের লিংক, ইন্টারনেট সংযোগ বা সার্ভারের CORS অনুমতি পরীক্ষা করুন।');
   }
 }
 function showStatus(text) {
@@ -168,9 +165,10 @@ function playStream(url,name='ভিডিও') {
   if(!url) return;
   selectedUrl=url;
   document.getElementById('activeName').textContent=name;
-  document.getElementById('streamInput').value=url;
+  const streamInput = document.getElementById('streamInput');
+  if (streamInput) streamInput.value = url;
   cleanPlayer();
-  const u=url.toLowerCase().split('?')[0];
+  const u=url.toLowerCase().split('?')[0].split('#')[0];
   if (u.endsWith('.mpd') || url.toLowerCase().includes('.mpd?')) {
     if (window.dashjs) {
       dash=dashjs.MediaPlayer().create(); dash.initialize(video,url,false);
@@ -188,37 +186,8 @@ function playStream(url,name='ভিডিও') {
   }
   renderChannels();
 }
-function playCustom() {
-  const url=document.getElementById('streamInput').value.trim();
-  if(url) playStream(url,'নিজের দেওয়া লিংক');
-}
-function loadPlaylistFromInput() {
-  const url=document.getElementById('playlistInput').value.trim();
-  if(url) fetchPlaylist(url);
-}
-function loadPlaylistFile() {
-  const file=document.getElementById('fileInput').files[0];
-  if(!file){showStatus('আগে একটি M3U ফাইল নির্বাচন করুন।');return;}
-  const reader=new FileReader();
-  reader.onload=()=>{channels=parseM3U(String(reader.result||''));renderChannels();if(!channels.length)showStatus('ফাইলে কোনো চ্যানেল পাওয়া যায়নি।');};
-  reader.readAsText(file);
-}
-function toggleFullscreen() {
-  const box=document.getElementById('playerBox');
-  if(document.fullscreenElement) document.exitFullscreen?.();
-  else if(box.requestFullscreen) box.requestFullscreen();
-  else if(video.webkitEnterFullscreen) video.webkitEnterFullscreen();
-}
-async function togglePip() {
-  try {
-    if(document.pictureInPictureElement) await document.exitPictureInPicture();
-    else if(document.pictureInPictureEnabled && video.readyState>0) await video.requestPictureInPicture();
-  } catch(e) {}
-}
-function stopVideo(){cleanPlayer();document.getElementById('activeName').textContent='চ্যানেল নির্বাচন করুন';}
-document.getElementById('streamInput').addEventListener('keydown',e=>{if(e.key==='Enter')playCustom();});
-document.getElementById('playlistInput').addEventListener('keydown',e=>{if(e.key==='Enter')loadPlaylistFromInput();});
-document.getElementById('playlistInput').value=DEFAULT_PLAYLIST;
+
+// পৃষ্ঠা খোলার সঙ্গে সঙ্গে নির্ধারিত প্লেলিস্ট লোড করার চেষ্টা করুন।
 fetchPlaylist(DEFAULT_PLAYLIST);
 </script>
 </body>

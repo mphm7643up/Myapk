@@ -116,6 +116,40 @@ function parseM3U(text) {
   }
   return out;
 }
+function addPlaylistFileFallback() {
+  const list = document.getElementById('channelList');
+  if (document.getElementById('localM3UFile')) return;
+  const wrap = document.createElement('div');
+  wrap.style.gridColumn = '1/-1';
+  wrap.style.textAlign = 'center';
+  const input = document.createElement('input');
+  input.id = 'localM3UFile';
+  input.type = 'file';
+  input.accept = '.m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl';
+  input.style.maxWidth = '100%';
+  input.style.marginTop = '8px';
+  input.addEventListener('change', async () => {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    try {
+      const parsed = parseM3U(await file.text());
+      if (!parsed.length) {
+        showStatus('এই ফাইলে চ্যানেল পাওয়া যায়নি। সঠিক M3U ফাইল বেছে নিন।');
+        addPlaylistFileFallback();
+        return;
+      }
+      channels = parsed;
+      category = 'all';
+      renderChannels();
+    } catch (e) {
+      showStatus('ফাইলটি পড়া যায়নি। অন্য M3U ফাইল চেষ্টা করুন।');
+      addPlaylistFileFallback();
+    }
+  });
+  wrap.appendChild(input);
+  list.appendChild(wrap);
+}
+
 async function fetchPlaylist(url) {
   if (!url) return;
   showStatus('প্লেলিস্ট লোড হচ্ছে…');
@@ -127,7 +161,8 @@ async function fetchPlaylist(url) {
     if (!parsed.length) throw new Error('এই ফাইলে চ্যানেল পাওয়া যায়নি');
     channels=parsed; renderChannels();
   } catch(e) {
-    showStatus('চ্যানেল লোড হয়নি। প্লেলিস্টের লিংক, ইন্টারনেট সংযোগ বা সার্ভারের CORS অনুমতি পরীক্ষা করুন।');
+    showStatus('অনলাইন প্লেলিস্ট লোড হয়নি। ফাইলটি সরাসরি মোবাইলে খুললে ব্রাউজার নেটওয়ার্ক অনুরোধ আটকে দিতে পারে। আপনার M3U ফাইল বেছে নিন।');
+    addPlaylistFileFallback();
   }
 }
 function showStatus(text) {
@@ -187,7 +222,6 @@ function playStream(url,name='ভিডিও') {
   renderChannels();
 }
 
-// পৃষ্ঠা খোলার সঙ্গে সঙ্গে নির্ধারিত প্লেলিস্ট লোড করার চেষ্টা করুন।
 fetchPlaylist(DEFAULT_PLAYLIST);
 </script>
 </body>

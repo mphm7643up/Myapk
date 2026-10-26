@@ -57,11 +57,9 @@ input:focus{border-color:var(--purple);box-shadow:0 0 0 3px #6659f51a}
       <button class="secondary" onclick="togglePip()">▣ ছোট পর্দা</button>
       <button class="secondary" onclick="stopVideo()">■ বন্ধ</button>
     </div>
-      <button onclick="loadPlaylistFromInput()">চ্যানেল আনুন</button>
-    </div>
     <div class="inputrow">
-      <input id="fileInput" type="file" accept=".m3u,.m3u8,text/plain" aria-label="M3U ফাইল নির্বাচন করুন">
-      <button onclick="loadPlaylistFile()">ফাইল খুলুন</button>
+      <input id="playlistInput" type="text" placeholder="এখানে M3U প্লেলিস্টের লিংক দিন">
+      <button onclick="loadPlaylistFromInput()">চ্যানেল আনুন</button>
     </div>
     <div class="hint">নোট: ভিডিও চলা নির্ভর করে লিংক, ফরম্যাট, নেটওয়ার্ক এবং সার্ভারের অনুমতির ওপর। কিছু সাইটের লিংক সরাসরি প্লেয়ারে চলবে না।</div>
   </section>

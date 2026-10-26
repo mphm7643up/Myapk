@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SHAWON TV — Live TV</title>
+<title>PARVES TV — Live TV</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video-js.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
@@ -20,7 +20,7 @@ body{margin:0;padding:18px;background:linear-gradient(135deg,#fbfaff,#f0edff);co
 .player{width:100%;aspect-ratio:16/9;background:#100d1b;border-radius:14px;overflow:hidden;position:relative}
 .player video,.player iframe{width:100%;height:100%;position:absolute;inset:0;border:0}
 #video{object-fit:contain}
-.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}\n.ticker{margin-top:13px;overflow:hidden;white-space:nowrap;border-radius:10px;padding:11px 0;background:linear-gradient(100deg,var(--purple),var(--violet),var(--pink));color:#fff;font-size:14px;font-weight:800;box-shadow:0 5px 14px #6659f533}\n.ticker span{display:inline-block;padding-left:100%;animation:runTicker 14s linear infinite}\n@keyframes runTicker{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 button,.file-label{border:0;border-radius:10px;padding:10px 14px;background:linear-gradient(120deg,var(--purple),var(--violet));color:#fff;font-weight:bold;cursor:pointer;box-shadow:0 5px 14px #6659f533}
 button:hover,.file-label:hover{filter:brightness(1.06)}
 button.secondary{background:#f0edff;color:#5142ce;box-shadow:none;border:1px solid var(--line)}
@@ -52,24 +52,9 @@ input:focus{border-color:var(--purple);box-shadow:0 0 0 3px #6659f51a}
     <div class="player" id="playerBox">
       <video id="video" controls playsinline preload="metadata"></video>
     </div>
-    <div class="tools">
-      <button class="secondary" onclick="toggleFullscreen()">⛶ ফুল স্ক্রিন</button>
-      <button class="secondary" onclick="togglePip()">▣ ছোট পর্দা</button>
-      <button class="secondary" onclick="stopVideo()">■ বন্ধ</button>
+    <div class="ticker" role="status" aria-label="সার্ভিস নোটিফিকেশন">
+      <span>📢 RUNNING — সার্ভিস চালু আছে</span>
     </div>
-    <div class="inputrow">
-      <input id="streamInput" type="text" placeholder="এখানে লিংক দিন (M3U8 / MPD / MP4)">
-      <button onclick="playCustom()">প্লে করুন</button>
-    </div>
-    <div class="inputrow">
-      <input id="playlistInput" type="text" placeholder="এখানে M3U প্লেলিস্টের লিংক দিন">
-      <button onclick="loadPlaylistFromInput()">চ্যানেল আনুন</button>
-    </div>
-    <div class="inputrow">
-      <input id="fileInput" type="file" accept=".m3u,.m3u8,text/plain" aria-label="M3U ফাইল নির্বাচন করুন">
-      <button onclick="loadPlaylistFile()">ফাইল খুলুন</button>
-    </div>
-    <div class="hint">নোট: ভিডিও চলা নির্ভর করে লিংক, ফরম্যাট, নেটওয়ার্ক এবং সার্ভারের অনুমতির ওপর। কিছু সাইটের লিংক সরাসরি প্লেয়ারে চলবে না।</div>
   </section>
 
   <section class="panel">
@@ -196,38 +181,6 @@ function playStream(url,name='ভিডিও') {
   }
   renderChannels();
 }
-function playCustom() {
-  const url=document.getElementById('streamInput').value.trim();
-  if(url) playStream(url,'নিজের দেওয়া লিংক');
-}
-function loadPlaylistFromInput() {
-  const url=document.getElementById('playlistInput').value.trim();
-  if(url) fetchPlaylist(url);
-}
-function loadPlaylistFile() {
-  const file=document.getElementById('fileInput').files[0];
-  if(!file){showStatus('আগে একটি M3U ফাইল নির্বাচন করুন।');return;}
-  const reader=new FileReader();
-  reader.onload=()=>{channels=parseM3U(String(reader.result||''));renderChannels();if(!channels.length)showStatus('ফাইলে কোনো চ্যানেল পাওয়া যায়নি।');};
-  reader.readAsText(file);
-}
-function toggleFullscreen() {
-  const box=document.getElementById('playerBox');
-  if(document.fullscreenElement) document.exitFullscreen?.();
-  else if(box.requestFullscreen) box.requestFullscreen();
-  else if(video.webkitEnterFullscreen) video.webkitEnterFullscreen();
-}
-async function togglePip() {
-  try {
-    if(document.pictureInPictureElement) await document.exitPictureInPicture();
-    else if(document.pictureInPictureEnabled && video.readyState>0) await video.requestPictureInPicture();
-  } catch(e) {}
-}
-function stopVideo(){cleanPlayer();document.getElementById('activeName').textContent='চ্যানেল নির্বাচন করুন';}
-document.getElementById('streamInput').addEventListener('keydown',e=>{if(e.key==='Enter')playCustom();});
-document.getElementById('playlistInput').addEventListener('keydown',e=>{if(e.key==='Enter')loadPlaylistFromInput();});
-document.getElementById('playlistInput').value=DEFAULT_PLAYLIST;
-fetchPlaylist(DEFAULT_PLAYLIST);
 </script>
 </body>
 </html>

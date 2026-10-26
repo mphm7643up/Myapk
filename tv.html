@@ -3,82 +3,231 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>আমার M3U TV</title>
+<title>SHAWON TV — Live TV</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video-js.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.2/dash.all.min.js"></script>
 <style>
+:root{--bg:#f7f5ff;--panel:#fff;--ink:#211b38;--muted:#77708f;--line:#e7e0ff;--purple:#6659f5;--violet:#8b55f6;--pink:#d44aae}
 *{box-sizing:border-box}
-body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif}
-header{padding:18px;text-align:center;background:linear-gradient(90deg,#6138e8,#087fdc,#e83e8c);font-size:25px;font-weight:bold}
-main{max-width:1000px;margin:auto;padding:16px}
-video{width:100%;aspect-ratio:16/9;background:#000;border-radius:14px}
-h2{font-size:20px;margin:22px 0 12px}
-#channels{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}
-.channel{padding:15px 12px;border:1px solid #343c60;border-radius:12px;background:linear-gradient(135deg,#202b50,#17152f);color:white;text-align:left;cursor:pointer;overflow-wrap:anywhere}
-.channel:hover{border-color:#9b7cff;background:linear-gradient(135deg,#3a3473,#183a63)}
-#message{color:#bfc9e9;font-size:14px;line-height:1.7}
+body{margin:0;padding:18px;background:linear-gradient(135deg,#fbfaff,#f0edff);color:var(--ink);font-family:Arial,"Noto Sans Bengali",sans-serif}
+.main{max-width:1600px;margin:auto;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);gap:18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 10px 30px #6659f51a}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.logo{font-size:25px;font-weight:900;letter-spacing:1.5px;background:linear-gradient(90deg,var(--purple),var(--pink));color:transparent;background-clip:text}
+#activeName{font-size:14px;color:var(--muted);font-weight:bold}
+.player{width:100%;aspect-ratio:16/9;background:#100d1b;border-radius:14px;overflow:hidden;position:relative}
+.player video,.player iframe{width:100%;height:100%;position:absolute;inset:0;border:0}
+#video{object-fit:contain}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+button,.file-label{border:0;border-radius:10px;padding:10px 14px;background:linear-gradient(120deg,var(--purple),var(--violet));color:#fff;font-weight:bold;cursor:pointer;box-shadow:0 5px 14px #6659f533}
+button:hover,.file-label:hover{filter:brightness(1.06)}
+button.secondary{background:#f0edff;color:#5142ce;box-shadow:none;border:1px solid var(--line)}
+.inputrow{display:flex;gap:8px;margin-top:14px}
+input[type=text]{width:100%;min-width:0;padding:13px 14px;border:1px solid #dcd3ff;border-radius:10px;background:#fff;color:var(--ink);outline:none}
+input:focus{border-color:var(--purple);box-shadow:0 0 0 3px #6659f51a}
+.hint{font-size:12px;color:var(--muted);margin-top:9px;line-height:1.6}
+.categories{display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px}
+.categories button{white-space:nowrap;padding:8px 12px;font-size:12px;box-shadow:none}
+.categories button.active{background:linear-gradient(120deg,var(--pink),var(--violet))}
+.channels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;max-height:70vh;overflow:auto;padding:3px}
+.channel{min-width:0;border:1px solid var(--line);border-radius:12px;padding:10px 6px;background:#fcfbff;display:flex;align-items:center;flex-direction:column;gap:7px;cursor:pointer;transition:.18s}
+.channel:hover,.channel.selected{border-color:var(--purple);background:#f1eeff;box-shadow:0 4px 15px #6659f51a}
+.channel img{width:44px;height:44px;object-fit:contain}
+.channel strong{font-size:12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;color:#5142ce}
+.status{font-size:13px;color:var(--muted);padding:12px;text-align:center}
+.footer{font-size:11px;color:var(--muted);text-align:center;margin-top:14px}
+@media(max-width:850px){body{padding:10px}.main{grid-template-columns:1fr}.panel{padding:13px}.channels{grid-template-columns:repeat(3,minmax(0,1fr));max-height:55vh}.logo{font-size:22px}}
+@media(max-width:420px){.channels{grid-template-columns:repeat(2,minmax(0,1fr))}.inputrow{flex-direction:column}}
 </style>
 </head>
 <body>
-<header>📺 আমার M3U TV</header>
-<main>
-  <video id="player" controls playsinline></video>
-  <h2>📡 সকল টিভি চ্যানেল</h2>
-  <p id="message">চ্যানেল লোড হচ্ছে...</p>
-  <div id="channels"></div>
-</main>
+<div class="main">
+  <section class="panel">
+    <div class="header">
+      <div class="logo">SHAWON TV</div>
+      <div id="activeName">চ্যানেল নির্বাচন করুন</div>
+    </div>
+    <div class="player" id="playerBox">
+      <video id="video" controls playsinline preload="metadata"></video>
+    </div>
+    <div class="tools">
+      <button class="secondary" onclick="toggleFullscreen()">⛶ ফুল স্ক্রিন</button>
+      <button class="secondary" onclick="togglePip()">▣ ছোট পর্দা</button>
+      <button class="secondary" onclick="stopVideo()">■ বন্ধ</button>
+    </div>
+    <div class="inputrow">
+      <input id="streamInput" type="text" placeholder="এখানে লিংক দিন (M3U8 / MPD / MP4)">
+      <button onclick="playCustom()">প্লে করুন</button>
+    </div>
+    <div class="inputrow">
+      <input id="playlistInput" type="text" placeholder="এখানে M3U প্লেলিস্টের লিংক দিন">
+      <button onclick="loadPlaylistFromInput()">চ্যানেল আনুন</button>
+    </div>
+    <div class="inputrow">
+      <input id="fileInput" type="file" accept=".m3u,.m3u8,text/plain" aria-label="M3U ফাইল নির্বাচন করুন">
+      <button onclick="loadPlaylistFile()">ফাইল খুলুন</button>
+    </div>
+    <div class="hint">নোট: ভিডিও চলা নির্ভর করে লিংক, ফরম্যাট, নেটওয়ার্ক এবং সার্ভারের অনুমতির ওপর। কিছু সাইটের লিংক সরাসরি প্লেয়ারে চলবে না।</div>
+  </section>
+
+  <section class="panel">
+    <div class="header">
+      <div class="logo" style="font-size:20px">চ্যানেল তালিকা</div>
+      <div id="count" class="hint">০ চ্যানেল</div>
+    </div>
+    <div class="categories" id="categories">
+      <button class="active" data-cat="all" onclick="setCategory('all',this)">সব</button>
+      <button data-cat="sports" onclick="setCategory('sports',this)">খেলা</button>
+      <button data-cat="bangla" onclick="setCategory('bangla',this)">বাংলা</button>
+      <button data-cat="indian_bangla" onclick="setCategory('indian_bangla',this)">ইন্ডিয়ান বাংলা</button>
+      <button data-cat="hindi" onclick="setCategory('hindi',this)">হিন্দি</button>
+      <button data-cat="music" onclick="setCategory('music',this)">গান</button>
+      <button data-cat="documentary" onclick="setCategory('documentary',this)">তথ্যচিত্র</button>
+      <button data-cat="cartoon" onclick="setCategory('cartoon',this)">কার্টুন</button>
+    </div>
+    <div class="channels" id="channelList"><div class="status">M3U লিংক দিন অথবা প্লেলিস্ট লোড করুন।</div></div>
+    <div class="footer">SHAWON TV · আপনার অনুমোদিত স্ট্রিম লিংক ব্যবহার করুন</div>
+  </section>
+</div>
 
 <script>
-// ⬇️ এখানে আপনার M3U লিংক দিন
-const M3U_LINK = "এখানে_আপনার_M3U_লিংক_বসান";
+const DEFAULT_PLAYLIST = 'https://raw.githubusercontent.com/bushmr263-ship-it/online-tv/main/playlist.m3u';
+const FALLBACK_LOGO = 'https://i.postimg.cc/W1z5BGPZ/20240823_024712.png';
+const video = document.getElementById('video');
+let hls = null, dash = null, channels = [], category = 'all', selectedUrl = '';
 
-async function শুরু() {
-  const বার্তা = document.getElementById("message");
-  const তালিকা = document.getElementById("channels");
-
-  if (M3U_LINK.includes("এখানে_আপনার")) {
-    বার্তা.textContent = "প্রথমে কোডের উপরে M3U_LINK-এর জায়গায় আপনার M3U লিংক বসান।";
-    return;
-  }
-
-  try {
-    const উত্তর = await fetch(M3U_LINK);
-    if (!উত্তর.ok) throw new Error("লিংক খোলা যায়নি");
-    const লেখা = await উত্তর.text();
-    const লাইন = লেখা.split(/\r?\n/);
-    let নাম = "নামহীন চ্যানেল";
-    let সংখ্যা = 0;
-
-    for (const কাঁচা of লাইন) {
-      const ল = কাঁচা.trim();
-      if (ল.startsWith("#EXTINF")) {
-        নাম = (ল.split(",").pop() || "নামহীন চ্যানেল").trim();
-      } else if (ল && !ল.startsWith("#") && /^https?:\/\//i.test(ল)) {
-        const চ্যানেলেরনাম = নাম;
-        const লিংক = ল;
-        const বোতাম = document.createElement("button");
-        বোতাম.className = "channel";
-        বোতাম.textContent = "▶ " + চ্যানেলেরনাম;
-        বোতাম.onclick = () => {
-          const প্লেয়ার = document.getElementById("player");
-          প্লেয়ার.src = লিংক;
-          প্লেয়ার.play().catch(() => {
-            বার্তা.textContent = "এই চ্যানেলটি ব্রাউজারে চালানো যাচ্ছে না। অন্য চ্যানেল চেষ্টা করুন।";
-          });
-          বার্তা.textContent = "নির্বাচিত চ্যানেল: " + চ্যানেলেরনাম;
-        };
-        তালিকা.appendChild(বোতাম);
-        সংখ্যা++;
-        নাম = "নামহীন চ্যানেল";
-      }
+function classify(name, group='') {
+  const s = (name+' '+group).toLowerCase();
+  if (/sport|cricket|football|bein|tsn|tnt sport|willow|ten sport|fifa/.test(s)) return 'sports';
+  if (/documentary|discovery|nat geo|national geographic|animal planet|history|science|wildlife/.test(s)) return 'documentary';
+  if (/cartoon|kids|duronto|nick|pogo|disney|doraemon|tom & jerry|sony yay/.test(s)) return 'cartoon';
+  if (/music|9xm|mtv|zing|mastiii|sangeet/.test(s)) return 'music';
+  if (/jalsha|zee bangla|colors bangla|sun bangla|sananda|indian bangla/.test(s)) return 'indian_bangla';
+  if (/hindi|star gold|sony max|zee cinema|bollywood|goldmines|star plus|sony sab|bhojpuri|hbo|cinema|movies/.test(s)) return 'hindi';
+  return 'bangla';
+}
+function parseM3U(text) {
+  const lines = text.replace(/^\uFEFF/,'').split(/\r?\n/);
+  const out=[]; let meta=null;
+  for (const raw of lines) {
+    const line=raw.trim();
+    if (!line) continue;
+    if (line.startsWith('#EXTINF')) {
+      const name=(line.split(',').pop()||'চ্যানেল').trim();
+      const logo=(line.match(/tvg-logo=["']([^"']*)["']/i)||[])[1]||FALLBACK_LOGO;
+      const group=(line.match(/group-title=["']([^"']*)["']/i)||[])[1]||'';
+      meta={name,logo,group,category:classify(name,group)};
+    } else if (!line.startsWith('#') && meta) {
+      const urls=line.match(/https?:\/\/[^\s]+/g)||[line];
+      out.push({...meta,url:urls[0]});
+      meta=null;
     }
-
-    বার্তা.textContent = সংখ্যা
-      ? "মোট " + সংখ্যা + "টি চ্যানেল পাওয়া গেছে। চালাতে চ্যানেলের নাম চাপ দিন।"
-      : "কোনো চ্যানেল পাওয়া যায়নি। M3U লিংক পরীক্ষা করুন।";
-  } catch (ত্রুটি) {
-    বার্তা.textContent = "চ্যানেল লোড হয়নি। লিংকটি ঠিক আছে কি না দেখুন; সার্ভার ব্রাউজার থেকে অ্যাক্সেস বন্ধ রাখতে পারে।";
+  }
+  return out;
+}
+async function fetchPlaylist(url) {
+  if (!url) return;
+  showStatus('প্লেলিস্ট লোড হচ্ছে…');
+  try {
+    const response=await fetch(url,{cache:'no-store'});
+    if (!response.ok) throw new Error('HTTP '+response.status);
+    const text=await response.text();
+    const parsed=parseM3U(text);
+    if (!parsed.length) throw new Error('এই ফাইলে চ্যানেল পাওয়া যায়নি');
+    channels=parsed; renderChannels();
+  } catch(e) {
+    showStatus('প্লেলিস্ট লোড হয়নি। লিংক ঠিক আছে কি না দেখুন; সার্ভারের CORS সীমাবদ্ধতাও কারণ হতে পারে।');
   }
 }
-শুরু();
+function showStatus(text) {
+  document.getElementById('channelList').innerHTML='';
+  const p=document.createElement('div'); p.className='status'; p.style.gridColumn='1/-1'; p.textContent=text;
+  document.getElementById('channelList').appendChild(p);
+}
+function renderChannels() {
+  const list=document.getElementById('channelList'); list.innerHTML='';
+  const filtered=channels.filter(ch=>category==='all'||ch.category===category);
+  document.getElementById('count').textContent=filtered.length+' চ্যানেল';
+  if (!filtered.length) { showStatus('এই বিভাগে কোনো চ্যানেল পাওয়া যায়নি।'); return; }
+  for (const ch of filtered) {
+    const item=document.createElement('button');
+    item.type='button'; item.className='channel'+(selectedUrl===ch.url?' selected':'');
+    const img=document.createElement('img'); img.src=ch.logo||FALLBACK_LOGO; img.alt=''; img.loading='lazy';
+    img.onerror=()=>{img.onerror=null;img.src=FALLBACK_LOGO;};
+    const name=document.createElement('strong'); name.textContent=ch.name;
+    item.append(img,name);
+    item.onclick=()=>playStream(ch.url,ch.name);
+    list.appendChild(item);
+  }
+}
+function setCategory(cat,btn) {
+  category=cat;
+  document.querySelectorAll('.categories button').forEach(b=>b.classList.toggle('active',b===btn));
+  renderChannels();
+}
+function cleanPlayer() {
+  if(hls){hls.destroy();hls=null;}
+  if(dash){try{dash.reset();}catch(e){}dash=null;}
+  video.pause(); video.removeAttribute('src'); video.load();
+}
+function playStream(url,name='ভিডিও') {
+  if(!url) return;
+  selectedUrl=url;
+  document.getElementById('activeName').textContent=name;
+  document.getElementById('streamInput').value=url;
+  cleanPlayer();
+  const u=url.toLowerCase().split('?')[0];
+  if (u.endsWith('.mpd') || url.toLowerCase().includes('.mpd?')) {
+    if (window.dashjs) {
+      dash=dashjs.MediaPlayer().create(); dash.initialize(video,url,false);
+      dash.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED,()=>video.play().catch(()=>{}));
+    } else { video.src=url; video.play().catch(()=>{}); }
+  } else if ((u.endsWith('.m3u8') || url.toLowerCase().includes('.m3u8?')) && window.Hls && Hls.isSupported()) {
+    hls=new Hls({enableWorker:true});
+    hls.loadSource(url); hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED,()=>video.play().catch(()=>{}));
+    hls.on(Hls.Events.ERROR,(event,data)=>{if(data.fatal) document.getElementById('activeName').textContent=name+' — স্ট্রিম চালানো যাচ্ছে না';});
+  } else if (video.canPlayType('application/vnd.apple.mpegurl') && (u.endsWith('.m3u8') || url.toLowerCase().includes('.m3u8?'))) {
+    video.src=url; video.play().catch(()=>{});
+  } else {
+    video.src=url; video.play().catch(()=>{});
+  }
+  renderChannels();
+}
+function playCustom() {
+  const url=document.getElementById('streamInput').value.trim();
+  if(url) playStream(url,'নিজের দেওয়া লিংক');
+}
+function loadPlaylistFromInput() {
+  const url=document.getElementById('playlistInput').value.trim();
+  if(url) fetchPlaylist(url);
+}
+function loadPlaylistFile() {
+  const file=document.getElementById('fileInput').files[0];
+  if(!file){showStatus('আগে একটি M3U ফাইল নির্বাচন করুন।');return;}
+  const reader=new FileReader();
+  reader.onload=()=>{channels=parseM3U(String(reader.result||''));renderChannels();if(!channels.length)showStatus('ফাইলে কোনো চ্যানেল পাওয়া যায়নি।');};
+  reader.readAsText(file);
+}
+function toggleFullscreen() {
+  const box=document.getElementById('playerBox');
+  if(document.fullscreenElement) document.exitFullscreen?.();
+  else if(box.requestFullscreen) box.requestFullscreen();
+  else if(video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+}
+async function togglePip() {
+  try {
+    if(document.pictureInPictureElement) await document.exitPictureInPicture();
+    else if(document.pictureInPictureEnabled && video.readyState>0) await video.requestPictureInPicture();
+  } catch(e) {}
+}
+function stopVideo(){cleanPlayer();document.getElementById('activeName').textContent='চ্যানেল নির্বাচন করুন';}
+document.getElementById('streamInput').addEventListener('keydown',e=>{if(e.key==='Enter')playCustom();});
+document.getElementById('playlistInput').addEventListener('keydown',e=>{if(e.key==='Enter')loadPlaylistFromInput();});
+document.getElementById('playlistInput').value=DEFAULT_PLAYLIST;
+fetchPlaylist(DEFAULT_PLAYLIST);
 </script>
 </body>
 </html>

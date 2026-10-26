@@ -21,9 +21,6 @@ body{margin:0;padding:18px;background:linear-gradient(135deg,#fbfaff,#f0edff);co
 .player video,.player iframe{width:100%;height:100%;position:absolute;inset:0;border:0}
 #video{object-fit:contain}
 .tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
-.ticker{margin-top:13px;overflow:hidden;white-space:nowrap;border-radius:10px;padding:11px 0;background:linear-gradient(100deg,var(--purple),var(--violet),var(--pink));color:#fff;font-size:14px;font-weight:800;box-shadow:0 5px 14px #6659f533}
-.ticker span{display:inline-block;padding-left:100%;animation:runTicker 14s linear infinite}
-@keyframes runTicker{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 button,.file-label{border:0;border-radius:10px;padding:10px 14px;background:linear-gradient(120deg,var(--purple),var(--violet));color:#fff;font-weight:bold;cursor:pointer;box-shadow:0 5px 14px #6659f533}
 button:hover,.file-label:hover{filter:brightness(1.06)}
 button.secondary{background:#f0edff;color:#5142ce;box-shadow:none;border:1px solid var(--line)}
@@ -55,9 +52,24 @@ input:focus{border-color:var(--purple);box-shadow:0 0 0 3px #6659f51a}
     <div class="player" id="playerBox">
       <video id="video" controls playsinline preload="metadata"></video>
     </div>
-    <div class="ticker" role="status" aria-label="সার্ভিস নোটিফিকেশন">
-      <span>📢 RUNNING — সার্ভিস চালু আছে</span>
+    <div class="tools">
+      <button class="secondary" onclick="toggleFullscreen()">⛶ ফুল স্ক্রিন</button>
+      <button class="secondary" onclick="togglePip()">▣ ছোট পর্দা</button>
+      <button class="secondary" onclick="stopVideo()">■ বন্ধ</button>
     </div>
+    <div class="inputrow">
+      <input id="streamInput" type="text" placeholder="এখানে লিংক দিন (M3U8 / MPD / MP4)">
+      <button onclick="playCustom()">প্লে করুন</button>
+    </div>
+    <div class="inputrow">
+      <input id="playlistInput" type="text" placeholder="এখানে M3U প্লেলিস্টের লিংক দিন">
+      <button onclick="loadPlaylistFromInput()">চ্যানেল আনুন</button>
+    </div>
+    <div class="inputrow">
+      <input id="fileInput" type="file" accept=".m3u,.m3u8,text/plain" aria-label="M3U ফাইল নির্বাচন করুন">
+      <button onclick="loadPlaylistFile()">ফাইল খুলুন</button>
+    </div>
+    <div class="hint">নোট: ভিডিও চলা নির্ভর করে লিংক, ফরম্যাট, নেটওয়ার্ক এবং সার্ভারের অনুমতির ওপর। কিছু সাইটের লিংক সরাসরি প্লেয়ারে চলবে না।</div>
   </section>
 
   <section class="panel">
@@ -81,7 +93,7 @@ input:focus{border-color:var(--purple);box-shadow:0 0 0 3px #6659f51a}
 </div>
 
 <script>
-const DEFAULT_PLAYLIST = 'https://raw.githubusercontent.com/mphm7643up/Tv2/refs/heads/main/playlist.m3u';
+const DEFAULT_PLAYLIST = 'https://raw.githubusercontent.com/bushmr263-ship-it/online-tv/main/playlist.m3u';
 const FALLBACK_LOGO = 'https://i.postimg.cc/W1z5BGPZ/20240823_024712.png';
 const video = document.getElementById('video');
 let hls = null, dash = null, channels = [], category = 'all', selectedUrl = '';
@@ -97,14 +109,13 @@ function classify(name, group='') {
   return 'bangla';
 }
 function parseM3U(text) {
-  const lines = text.replace(/^\uFEFF/,'').split(/\r?
-/);
+  const lines = text.replace(/^\uFEFF/,'').split(/\r?\n/);
   const out=[]; let meta=null;
   for (const raw of lines) {
     const line=raw.trim();
     if (!line) continue;
     if (line.startsWith('#EXTINF')) {
-      const comma=line.lastIndexOf(','); const name=(comma>=0 ? line.slice(comma+1) : 'চ্যানেল').trim()||'চ্যানেল';
+      const name=(line.split(',').pop()||'চ্যানেল').trim();
       const logo=(line.match(/tvg-logo=["']([^"']*)["']/i)||[])[1]||FALLBACK_LOGO;
       const group=(line.match(/group-title=["']([^"']*)["']/i)||[])[1]||'';
       meta={name,logo,group,category:classify(name,group)};
@@ -116,40 +127,6 @@ function parseM3U(text) {
   }
   return out;
 }
-function addPlaylistFileFallback() {
-  const list = document.getElementById('channelList');
-  if (document.getElementById('localM3UFile')) return;
-  const wrap = document.createElement('div');
-  wrap.style.gridColumn = '1/-1';
-  wrap.style.textAlign = 'center';
-  const input = document.createElement('input');
-  input.id = 'localM3UFile';
-  input.type = 'file';
-  input.accept = '.m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl';
-  input.style.maxWidth = '100%';
-  input.style.marginTop = '8px';
-  input.addEventListener('change', async () => {
-    const file = input.files && input.files[0];
-    if (!file) return;
-    try {
-      const parsed = parseM3U(await file.text());
-      if (!parsed.length) {
-        showStatus('এই ফাইলে চ্যানেল পাওয়া যায়নি। সঠিক M3U ফাইল বেছে নিন।');
-        addPlaylistFileFallback();
-        return;
-      }
-      channels = parsed;
-      category = 'all';
-      renderChannels();
-    } catch (e) {
-      showStatus('ফাইলটি পড়া যায়নি। অন্য M3U ফাইল চেষ্টা করুন।');
-      addPlaylistFileFallback();
-    }
-  });
-  wrap.appendChild(input);
-  list.appendChild(wrap);
-}
-
 async function fetchPlaylist(url) {
   if (!url) return;
   showStatus('প্লেলিস্ট লোড হচ্ছে…');
@@ -161,8 +138,7 @@ async function fetchPlaylist(url) {
     if (!parsed.length) throw new Error('এই ফাইলে চ্যানেল পাওয়া যায়নি');
     channels=parsed; renderChannels();
   } catch(e) {
-    showStatus('অনলাইন প্লেলিস্ট লোড হয়নি। ফাইলটি সরাসরি মোবাইলে খুললে ব্রাউজার নেটওয়ার্ক অনুরোধ আটকে দিতে পারে। আপনার M3U ফাইল বেছে নিন।');
-    addPlaylistFileFallback();
+    showStatus('প্লেলিস্ট লোড হয়নি। লিংক ঠিক আছে কি না দেখুন; সার্ভারের CORS সীমাবদ্ধতাও কারণ হতে পারে।');
   }
 }
 function showStatus(text) {
@@ -200,10 +176,9 @@ function playStream(url,name='ভিডিও') {
   if(!url) return;
   selectedUrl=url;
   document.getElementById('activeName').textContent=name;
-  const streamInput = document.getElementById('streamInput');
-  if (streamInput) streamInput.value = url;
+  document.getElementById('streamInput').value=url;
   cleanPlayer();
-  const u=url.toLowerCase().split('?')[0].split('#')[0];
+  const u=url.toLowerCase().split('?')[0];
   if (u.endsWith('.mpd') || url.toLowerCase().includes('.mpd?')) {
     if (window.dashjs) {
       dash=dashjs.MediaPlayer().create(); dash.initialize(video,url,false);
@@ -221,7 +196,37 @@ function playStream(url,name='ভিডিও') {
   }
   renderChannels();
 }
-
+function playCustom() {
+  const url=document.getElementById('streamInput').value.trim();
+  if(url) playStream(url,'নিজের দেওয়া লিংক');
+}
+function loadPlaylistFromInput() {
+  const url=document.getElementById('playlistInput').value.trim();
+  if(url) fetchPlaylist(url);
+}
+function loadPlaylistFile() {
+  const file=document.getElementById('fileInput').files[0];
+  if(!file){showStatus('আগে একটি M3U ফাইল নির্বাচন করুন।');return;}
+  const reader=new FileReader();
+  reader.onload=()=>{channels=parseM3U(String(reader.result||''));renderChannels();if(!channels.length)showStatus('ফাইলে কোনো চ্যানেল পাওয়া যায়নি।');};
+  reader.readAsText(file);
+}
+function toggleFullscreen() {
+  const box=document.getElementById('playerBox');
+  if(document.fullscreenElement) document.exitFullscreen?.();
+  else if(box.requestFullscreen) box.requestFullscreen();
+  else if(video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+}
+async function togglePip() {
+  try {
+    if(document.pictureInPictureElement) await document.exitPictureInPicture();
+    else if(document.pictureInPictureEnabled && video.readyState>0) await video.requestPictureInPicture();
+  } catch(e) {}
+}
+function stopVideo(){cleanPlayer();document.getElementById('activeName').textContent='চ্যানেল নির্বাচন করুন';}
+document.getElementById('streamInput').addEventListener('keydown',e=>{if(e.key==='Enter')playCustom();});
+document.getElementById('playlistInput').addEventListener('keydown',e=>{if(e.key==='Enter')loadPlaylistFromInput();});
+document.getElementById('playlistInput').value=DEFAULT_PLAYLIST;
 fetchPlaylist(DEFAULT_PLAYLIST);
 </script>
 </body>

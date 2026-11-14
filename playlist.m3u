@@ -1,5 +1,5 @@
 #EXTM3U
-#EXTINF:-1 tvg-id="ch_0" tvg-name="Shangshad Bangladesh" tvg-logo="https://pub-dbd59bcc344f405ab5a1f9697b81831f.r2.dev/btv-shangshad.webp" group-title="Entertainment",Shangshad Bangladesh
+#EXTINF:-1 tvg-id="ch_0" tvg-name="Shangshad Bangladesh" tvg-logo="https://logos-world.net/wp-content/uploads/2023/05/EA-Sports-Logo.png" group-title="Entertainment",Shangshad Bangladesh
 https://bd-tv.sm-monirul-islam-rs.workers.dev/btv_shangshad/index.m3u8
 #EXTINF:-1 tvg-id="ch_1" tvg-name="BTV" tvg-logo="https://pub-dbd59bcc344f405ab5a1f9697b81831f.r2.dev/btv.webp" group-title="Entertainment",BTV
 https://nkafmbewiff.gpcdn.net/tile_2/master.m3u8

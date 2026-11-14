@@ -5,9 +5,3 @@ https://bd-tv.sm-monirul-islam-rs.workers.dev/btv_shangshad/index.m3u8
 https://nkafmbewiff.gpcdn.net/tile_2/master.m3u8
 #EXTINF:-1 tvg-id="ch_2" tvg-name="BTV News" tvg-logo="https://pub-dbd59bcc344f405ab5a1f9697b81831f.r2.dev/btv-news.webp" group-title="News",BTV News
 https://bd-tv.sm-monirul-islam-rs.workers.dev/btv_news/index.m3u8
-#EXTINF:-1 tvg-id="ch_3" tvg-name="Jamuna TV" tvg-logo="https://pub-dbd59bcc344f405ab5a1f9697b81831f.r2.dev/jamuna-tv.webp" group-title="News",Jamuna TV
-https://tvsen6.aynaott.com/KGdZEdA7qQ43dmPkgk1j/index.m3u8
-#EXTINF:-1 tvg-id="ch_4" tvg-name="BTV Chittagong" group-title="Entertainment",BTV Chittagong
-https://tvsen6.aynaott.com/TjGR1GcxKetHNVcMVxbq/tracks-v1a1/mono.ts.m3u8
-#EXTINF:-1 tvg-id="ch_5" tvg-name="DBC News" tvg-logo="https://pub-dbd59bcc344f405ab5a1f9697b81831f.r2.dev/dbc-news.webp" group-title="News",DBC News
-https://tvsen6.aynaott.com/pF66Tkz0qFwP2aMMqHyt/index.m3u8

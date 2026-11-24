@@ -1,13 +1,257 @@
-#EXTM3U
-#EXTINF:-1 tvg-id="ch_0" tvg-name="Shangshad Bangladesh" tvg-logo="https://pub-dbd59bcc344f405ab5a1f9697b81831f.r2.dev/btv-shangshad.webp" group-title="Entertainment",Shangshad Bangladesh
-https://bd-tv.sm-monirul-islam-rs.workers.dev/btv_shangshad/index.m3u8
-#EXTINF:-1 tvg-id="ch_1" tvg-name="BTV" tvg-logo="https://pub-dbd59bcc344f405ab5a1f9697b81831f.r2.dev/btv.webp" group-title="Entertainment",BTV
-https://nkafmbewiff.gpcdn.net/tile_2/master.m3u8
-#EXTINF:-1 tvg-id="ch_2" tvg-name="BTV News" tvg-logo="https://pub-dbd59bcc344f405ab5a1f9697b81831f.r2.dev/btv-news.webp" group-title="News",BTV News
-https://bd-tv.sm-monirul-islam-rs.workers.dev/btv_news/index.m3u8
-#EXTINF:-1 tvg-id="ch_3" tvg-name="Jamuna TV" tvg-logo="https://pub-dbd59bcc344f405ab5a1f9697b81831f.r2.dev/jamuna-tv.webp" group-title="News",Jamuna TV
-https://tvsen6.aynaott.com/KGdZEdA7qQ43dmPkgk1j/index.m3u8
-#EXTINF:-1 tvg-id="ch_4" tvg-name="BTV Chittagong" group-title="Entertainment",BTV Chittagong
-https://tvsen6.aynaott.com/TjGR1GcxKetHNVcMVxbq/tracks-v1a1/mono.ts.m3u8
-#EXTINF:-1 tvg-id="ch_5" tvg-name="DBC News" tvg-logo="https://pub-dbd59bcc344f405ab5a1f9697b81831f.r2.dev/dbc-news.webp" group-title="News",DBC News
-https://tvsen6.aynaott.com/pF66Tkz0qFwP2aMMqHyt/index.m3u8
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stream Player</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f6f7;color:#20242a;font-family:Arial,sans-serif}
+header{background:#fff;border-bottom:1px solid #e5e7eb;padding:17px 5%}
+.brand{font-size:20px;font-weight:700;letter-spacing:-.5px}
+.brand span{color:#3275c9}
+main{max-width:1000px;margin:28px auto;padding:0 16px}
+.card{background:#fff;border:1px solid #e4e6e9;border-radius:8px;padding:18px;margin-bottom:18px}
+h3{font-size:15px;margin:0 0 15px}
+input{padding:12px;border:1px solid #d8dce1;border-radius:5px;background:#fff;color:#222;min-width:0}
+input:focus{outline:1px solid #3275c9}
+.urlbox{display:flex;gap:8px}
+.urlbox input{flex:1;width:100%}
+button{border:0;border-radius:5px;padding:11px 15px;cursor:pointer;font-weight:600}
+.load{background:#3275c9;color:white}
+video{width:100%;display:block;background:#000;aspect-ratio:16/9;max-height:480px}
+.player-info{padding-top:13px;font-size:14px}
+.muted{color:#858b94;font-size:12px;margin-top:5px}
+.list-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
+#search{width:220px}
+.channel{display:flex;align-items:center;gap:12px;padding:11px 8px;border-bottom:1px solid #eee}
+.channel:last-child{border:0}
+.channel.active{background:#f0f5fc}
+.logo{width:38px;height:38px;object-fit:contain;background:#f0f1f3;border-radius:5px;padding:3px}
+.info{flex:1;min-width:0}
+.name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.group{font-size:11px;color:#888;margin-top:5px}
+.actions{display:flex;gap:6px}
+.play{background:#edf2f8;color:#3275c9}
+.copy{background:#f0f1f3;color:#444}
+.empty{text-align:center;padding:30px;color:#888;font-size:13px}
+#status{font-size:12px;color:#777;margin-top:10px}
+footer{text-align:center;color:#999;padding:22px;font-size:11px}
+@media(max-width:550px){
+ main{margin:17px auto;padding:0 10px}
+ .urlbox{flex-direction:column}
+ .urlbox button{width:100%}
+ #search{width:100%}
+ .list-head{align-items:stretch;flex-direction:column}
+ .channel{gap:8px;padding:10px 3px}
+ .logo{width:32px;height:32px}
+ .actions button{padding:9px 8px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<header><div class="brand">Stream<span>Player</span></div></header>
+<main>
+<section class="card">
+<h3>Playlist</h3>
+<div class="urlbox">
+<input id="url" type="url" placeholder="Enter M3U playlist URL">
+<button class="load" onclick="loadURL()">Load Playlist</button>
+</div>
+<div style="margin-top:12px">
+<input id="file" type="file" accept=".m3u,.m3u8,.txt">
+</div>
+<div id="status">Upload a playlist file or enter its URL.</div>
+</section>
+
+<section class="card">
+<h3>Video Player</h3>
+<video id="video" controls playsinline></video>
+<div class="player-info">
+<strong id="playing">No channel selected</strong>
+<div class="muted">Now Playing</div>
+</div>
+</section>
+
+<section class="card">
+<div class="list-head">
+<h3 style="margin:0">Channels (<span id="count">0</span>)</h3>
+<input id="search" placeholder="Search channel..." oninput="render()">
+</div>
+<div id="channels"><div class="empty">No playlist loaded.</div></div>
+</section>
+</main>
+<footer>Stream Player</footer>
+
+<script>
+let channels=[];
+let active=-1;
+let hls=null;
+const video=document.getElementById('video');
+
+function status(t){
+ document.getElementById('status').textContent=t;
+}
+
+function parse(text,base=''){
+ const lines=text.split(/\r?\n/);
+ const output=[];
+ let item=null;
+
+ for(const raw of lines){
+  const line=raw.trim();
+  if(!line)continue;
+
+  if(line.startsWith('#EXTINF:')){
+   const comma=line.indexOf(',');
+   const meta=comma<0?line:line.slice(0,comma);
+   const name=comma<0?'Unknown Channel':line.slice(comma+1).trim();
+   const get=k=>{
+    const m=meta.match(new RegExp(k+'="([^"]*)"','i'));
+    return m?m[1]:'';
+   };
+   item={
+    name:name||'Unknown Channel',
+    logo:get('tvg-logo'),
+    group:get('group-title')
+   };
+  }else if(!line.startsWith('#')){
+   let stream=line;
+   try{if(base)stream=new URL(line,base).href}catch(e){}
+   output.push({
+    name:item?.name||'Unknown Channel',
+    logo:item?.logo||'',
+    group:item?.group||'',
+    url:stream
+   });
+   item=null;
+  }
+ }
+ return output;
+}
+
+function setData(text,base=''){
+ channels=parse(text,base);
+ active=-1;
+ stopPlayer();
+ render();
+ status(channels.length+' channels loaded.');
+}
+
+document.getElementById('file').addEventListener('change',async e=>{
+ const f=e.target.files[0];
+ if(!f)return;
+ try{setData(await f.text())}
+ catch(err){status('Could not read file.')}
+});
+
+async function loadURL(){
+ const url=document.getElementById('url').value.trim();
+ if(!url){status('Enter a playlist URL first.');return}
+ status('Loading playlist...');
+ try{
+  const r=await fetch(url);
+  if(!r.ok)throw Error('Request failed');
+  setData(await r.text(),url);
+ }catch(e){
+  status('Could not load URL. The server may block browser requests (CORS).');
+ }
+}
+
+function render(){
+ const box=document.getElementById('channels');
+ const q=document.getElementById('search').value.toLowerCase();
+ const found=channels.map((c,i)=>({...c,index:i}))
+  .filter(c=>c.name.toLowerCase().includes(q));
+
+ document.getElementById('count').textContent=channels.length;
+ box.replaceChildren();
+
+ if(!found.length){
+  box.innerHTML='<div class="empty">No channels found.</div>';
+  return;
+ }
+
+ found.forEach(c=>{
+  const row=document.createElement('div');
+  row.className='channel'+(active===c.index?' active':'');
+
+  const logo=document.createElement('img');
+  logo.className='logo';
+  logo.alt='';
+  logo.src=c.logo||'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"%3E%3Crect width="40" height="40" rx="5" fill="%23e5e7eb"/%3E%3Ctext x="20" y="26" font-size="20" text-anchor="middle" fill="%23777"%3ETV%3C/text%3E%3C/svg%3E';
+  logo.onerror=()=>{logo.removeAttribute('src')};
+
+  const info=document.createElement('div');
+  info.className='info';
+  const name=document.createElement('div');
+  name.className='name';
+  name.textContent=c.name;
+  const group=document.createElement('div');
+  group.className='group';
+  group.textContent=c.group||'TV Channel';
+  info.append(name,group);
+  info.onclick=()=>play(c.index);
+
+  const actions=document.createElement('div');
+  actions.className='actions';
+
+  const playBtn=document.createElement('button');
+  playBtn.className='play';
+  playBtn.textContent='Play';
+  playBtn.onclick=()=>play(c.index);
+
+  const copyBtn=document.createElement('button');
+  copyBtn.className='copy';
+  copyBtn.textContent='Copy';
+  copyBtn.onclick=async()=>{
+   try{
+    await navigator.clipboard.writeText(c.url);
+    copyBtn.textContent='Copied';
+    setTimeout(()=>copyBtn.textContent='Copy',1400);
+   }catch(e){
+    window.prompt('Copy this link:',c.url);
+   }
+  };
+
+  actions.append(playBtn,copyBtn);
+  row.append(logo,info,actions);
+  box.append(row);
+ });
+}
+
+function stopPlayer(){
+ if(hls){hls.destroy();hls=null}
+ video.pause();
+ video.removeAttribute('src');
+ video.load();
+}
+
+function play(i){
+ const c=channels[i];
+ if(!c)return;
+ active=i;
+ render();
+ document.getElementById('playing').textContent=c.name;
+ stopPlayer();
+
+ const url=c.url;
+ const isHls=/\.m3u8($|[?#])/i.test(url);
+
+ if(isHls&&Hls.isSupported()){
+  hls=new Hls();
+  hls.loadSource(url);
+  hls.attachMedia(video);
+  hls.on(Hls.Events.ERROR,(event,data)=>{
+   if(data.fatal)status('Stream playback failed. Check the stream URL.');
+  });
+ }else{
+  video.src=url;
+ }
+ video.play().catch(()=>status('Press Play in the video player to start playback.'));
+}
+</script>
+</body>
+</html>
